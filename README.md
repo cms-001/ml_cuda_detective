@@ -275,7 +275,6 @@ The script identifies your GPU's CC and annotates each of these gates clearly so
 | ✅ | Installed and importable |
 | ❌ | Not installed or failed to import |
 | ⚠️ | Installed but outdated, or installed but with caveats |
-| 🔥 | Live GPU smoke test result with timing |
 | ℹ️ | Informational note |
 | 🚫 | Hardware gate — your GPU's CC does not meet the minimum requirement |
 
