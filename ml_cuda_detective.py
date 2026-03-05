@@ -372,8 +372,8 @@ def _silence_fd2():
 
 # ============================================================
 # ⚙️  User Configuration
-#    All runtime behaviour knobs are consolidated here so
-#    there is exactly one place to change settings:
+#    All runtime behaviour knobs are consolidated in the next
+#    three sectioins, so start here to change settings:
 #
 #    FETCH_RELEASE_DATES
 #      0 — no PyPI network calls; instant startup (default)
