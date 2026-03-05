@@ -1,0 +1,1586 @@
+
+════════════════════════════════════════════════════════════════════
+════════════════════  🕵️‍♂️  ML CUDA Detective  ════════════════════
+══════════  Linux/Windows + NVIDIA GPU Accelerator Stack  ══════════
+════════════════════════════════════════════════════════════════════
+Run time           2026-03-04  18:09:06
+Python             3.12.3  (/home/dev1/ml-py312-venv/bin/python3)
+Platform           Linux 6.6.87.2-microsoft-standard-WSL2  (x86_64)
+Benchmark depth    4  (memory pressure ~3-6min)
+Release dates      mode 0  (disabled)
+Save report        yes → /home/dev1/ml-reports/ml_cuda_detective_20260304_180906.txt
+════════════════════════════════════════════════════════════════════
+Full-stack environment inspector for NVIDIA GPU machines (Linux / Windows).
+Audits the complete Python ML/AI ecosystem in a single pass: CUDA/GPU framework
+availability and live benchmarks, CPU-only data science packages, Jupyter notebook
+infrastructure, MLOps tooling, and Agentic AI frameworks — from raw CUDA compute
+through to LLM clients, vector stores, and multi-agent orchestration systems.
+════════════════════════════════════════════════════════════════════
+What it checks
+  ⚡ CUDA/GPU frameworks   PyTorch CUDA · TensorFlow GPU · JAX CUDA · CuPy
+                            RAPIDS (cuDF/cuML/cuGraph) · TensorRT · Triton
+                            flash-attn · xformers · bitsandbytes · deepspeed
+  💨 Runtime smoke tests    matmul · conv2d · autograd · sparse ops
+                            ONNX CUDA/TRT EP · llama-cpp-python CUDA build
+  🖥️  CPU-only packages      numeric · wrangling · vector search · vision · NLP
+                            visualization · audio · TF ecosystem · dev tools
+  📓 Notebooks              JupyterLab · Jupyter AI · extensions · widgets · utils
+  🔬 MLOps                  experiment tracking · pipelines · model serving
+                            MLflow · W&B · DVC · ZenML · BentoML · Ray · Optuna
+  🤖 Agentic AI             LangChain · LangGraph · LlamaIndex · Strands · AutoGen
+                            CrewAI · Pydantic AI · OpenAI · Anthropic · Bedrock
+                            ChromaDB · Qdrant · FAISS-GPU · Weaviate · LanceDB
+  🏥 Environment health     OS/arch/Python · CUDA toolkit · cuDNN · nvidia-smi
+  📅 PyPI freshness         optional: installed version dates vs latest (mode 1/2)
+  🧠 Memory pressure        GPU RAM ceiling per framework (depth 4 only)
+════════════════════════════════════════════════════════════════════
+Configuration (edit the setting at the top of the script)
+    ⚙️  BENCHMARK_DEPTH=4 — smoke test thoroughness:
+           1=fast      (~15–25s)   512×512, float32 only
+           2=medium    (~45–75s)   1024×1024, f32+f16
+           3=thorough  (~2–4min)   2048×2048, f32+f16+bf16, stddev, MLP training
+           4=memory    (~3–6min)   depth-3 + GPU RAM ceiling tests per framework
+    ⚙️  FETCH_RELEASE_DATES=0 — PyPI freshness auditing:
+           0=disabled            no network calls, instant startup (default)
+           1=installed only      annotates ✅ lines with release date + ✅/⚠️ vs latest
+           2=all packages        mode 1 plus latest date for uninstalled packages too
+    ⚙️  REPORT_WIDTH=88 — word-wrap column width for all output lines;
+           change this one value to reflow the entire report for wider or narrower terminals
+    ⚙️  SAVE_REPORT=True  — mirrors all output to a timestamped .txt file in:
+           /home/dev1/ml-reports  (making every run self-archiving with no extra steps)
+    ⚙️  PRINT_NOTES=1 — explanatory footnotes printed at end of report:
+           0=suppress   omit the Notes section; useful for compact operational runs
+           1=print      include Notes — covers package manager scoping (why a package
+    ⚙️  PRINT_BIBLIOGRAPHY=1 — 65-entry IEEE annotated bibliography:
+           0=suppress   Each entry has a verified URL + annotation explaining its
+           1=print      relevance to this report. Print when sharing with stakeholders,
+           All six settings are at the top of the script under '⚙️  User Configuration'
+           and are the only values you should need to change between runs.
+    ⚙️  Add packages or categories — find the PKGS_CUDA dict (~line 1266) and either
+           add a ("Display name", "pypi-package-name") tuple to an existing category, or
+           add a new "Category Name — ⚡ CUDA/GPU" : [ ... ] key to create a new section.
+════════════════════════════════════════════════════════════════════
+
+Linux/Windows CUDA sanity checks
+--------------------------------
+  ✅ OS: Linux 6.6.87.2-microsoft-standard-WSL2  |  Ubuntu 24.04.4 LTS  |  arch: x86_64  |  kernel: 6.6.87.2-microsoft-standard-WSL2
+  ✅ Python detected  |  Python Version: 3.12.3
+  ℹ️  Package Installers: pip: 26.0.1  |  pipx: 1.4.3  |  conda: 24.1.2
+  ℹ️  Packages: pip: 946  |  pipx: 2  |  conda: 514
+  ℹ️  CPU: Intel(R) Core(TM) i7-7700HQ CPU @ 2.80GHz  |  8 logical cores  |  RAM: 9.7 GB
+  ✅ nvidia-smi available
+  ℹ️  GPU 0: NVIDIA GeForce GTX 1060  |  VRAM: 6.0 GB  |  Compute Capability: 6.1 (Pascal)  |  Driver: 581.80
+  ✅ CUDA cores: 1,280  (10 SMs)  |  ❌ Tensor Cores: none (requires Volta CC 7.0+)
+          ❌ Tensor Cores  ❌ 2:4 Structured Sparsity  ❌ FlashAttention-2  ❌ FlashAttention-3
+  ✅ nvcc (CUDA compiler)  |  CUDA toolkit: 12.8
+  ✅ CUDA_HOME: /usr/local/cuda-12
+  ℹ️  cuDNN version: 91002
+  ✅ torch.cuda available  |  CUDA runtime: 12.6  |  1 device(s)
+     Device 0: NVIDIA GeForce GTX 1060  (5 GB)
+  ℹ️  NVIDIA CUDA acceleration paths: torch.cuda, tensorflow-gpu, jax[cuda], cupy,
+      RAPIDS (cuDF/cuML/cuGraph), TensorRT, ONNX Runtime CUDA/TensorRT EP.
+
+Package presence — ⚡ CUDA / GPU Accelerated
+-------------------------------------------
+
+Core DL Frameworks — ⚡ CUDA/GPU
+...............................
+  ✅ PyTorch (CUDA backend): torch==2.8.0+cu126 — CUDA support built-in; requires CUDA-
+    capable GPU + matching toolkit
+  ✅ torchvision: torchvision==0.23.0+cu126
+  ✅ torchaudio: torchaudio==2.8.0+cu126
+  ✅ TensorFlow (GPU): tensorflow==2.20.0 — GPU via tensorflow[and-cuda] or tensorflow-
+    gpu (legacy)
+  ✅ Keras (standalone): keras==3.12.0
+  ✅ TensorBoard: tensorboard==2.20.0
+
+JAX / CUDA stack — ⚡ CUDA/GPU
+.............................
+  ✅ JAX: jax==0.4.38 — CUDA via jax[cuda12] — must match installed CUDA version
+  ✅ jaxlib: jaxlib==0.4.38
+  ✅ JAX CUDA 12 plugin: jax-cuda12-plugin==0.4.38
+  ❌ Flax: flax
+  ❌ Optax: optax
+  ❌ Chex: chex
+  ❌ Orbax: orbax-checkpoint
+
+CUDA Compute Primitives — ⚡ Direct CUDA kernels
+...............................................
+  ✅ CuPy (CUDA 12.x): cupy-cuda12x==13.6.0 — Install the wheel matching your CUDA
+    version (cuda11x, cuda12x, etc.)
+  ❌ CuPy (CUDA 11.x): cupy-cuda11x
+  ✅ CUDA Python (official NVIDIA bindings): cuda-python==12.9.2
+  ✅ nvidia-cuda-runtime-cu12 (PyPI runtime wheel): nvidia-cuda-runtime-cu12==12.6.77 —
+    PyPI-distributed CUDA runtime wheel (not the system CUDA toolkit — nvcc --version
+    checks that)
+  ✅ cuDNN Python bindings (CUDA 12): nvidia-cudnn-cu12==9.10.2.21
+  ✅ cuBLAS Python bindings (CUDA 12): nvidia-cublas-cu12==12.6.4.1
+  ✅ cuSPARSE Python bindings (CUDA 12): nvidia-cusparse-cu12==12.5.4.2
+  ✅ NCCL Python bindings (CUDA 12): nvidia-nccl-cu12==2.27.3
+  ✅ NVTX profiling markers: nvtx==0.2.13
+  ✅ PyNVML (GPU monitoring Python API): pynvml==12.0.0
+  ✅ nvidia-ml-py (nvidia-smi Python bindings): nvidia-ml-py==12.575.51
+
+RAPIDS Ecosystem — ⚡ GPU Data Science (CUDA 12, Pascal+ CC 6.0+)
+................................................................
+  ✅ cuDF (GPU DataFrames, CUDA 12): cudf-cu12==25.8.0 — RAPIDS cuDF — requires CUDA 12.x
+    + Pascal+ GPU (CC 6.0+)
+  ✅ cuML (GPU ML algorithms, CUDA 12): cuml-cu12==25.8.0 — RAPIDS cuML — requires CUDA
+    12.x + Pascal+ GPU (CC 6.0+)
+  ✅ cuGraph (GPU graph analytics, CUDA 12): cugraph-cu12==25.8.0
+  ❌ cuSpatial (GPU spatial analytics, CUDA 12): cuspatial-cu12
+  ❌ cuxfilter (GPU crossfilter dashboard, CUDA 12): cuxfilter-cu12
+  ✅ RAFT / pylibraft (RAPIDS primitives, CUDA 12): pylibraft-cu12==25.8.0
+  ✅ RAFT-dask (distributed RAPIDS, CUDA 12): raft-dask-cu12==25.8.0
+  ✅ RMM (RAPIDS Memory Manager, CUDA 12): rmm-cu12==25.8.0
+  ✅ cuDF Polars integration: cudf-polars-cu12==25.8.0
+
+ONNX Runtime — ⚡ CUDA/TensorRT Execution Providers
+..................................................
+  ✅ onnxruntime-gpu (CUDA + TRT EP): onnxruntime-gpu==1.19.2 — Includes CUDA EP +
+    TensorRT EP; separate from CPU-only onnxruntime
+  ❌ onnxruntime-extensions: onnxruntime-extensions
+  ✅ ONNX (format library): onnx==1.19.1
+  ❌ onnx-simplifier: onnxsim
+  ❌ onnxconverter-common: onnxconverter-common
+  ❌ onnxruntime-genai (CUDA build): onnxruntime-genai
+  ❌ onnxscript (ONNX IR scripting): onnxscript
+
+TensorRT / Inference Optimization — ⚡ CUDA/TensorRT
+...................................................
+  ✅ TensorRT (NVIDIA Python package): tensorrt==10.13.3.9 — Requires NVIDIA TensorRT
+    SDK; install from NVIDIA's wheel repo
+  ❌ torch-tensorrt (TorchScript → TRT): torch-tensorrt — Requires TensorRT SDK installed
+    before pip install
+  ❌ tensorrt-lean (slim TRT runtime): tensorrt-lean
+  ❌ tensorrt-dispatch (TRT dispatch): tensorrt-dispatch
+  ❌ polygraphy (TRT model analysis): polygraphy
+  ❌ onnx-graphsurgeon (graph editing): onnx-graphsurgeon
+  ❌ nvidia-pyindex (NVIDIA PyPI index helper): nvidia-pyindex
+
+OpenAI Triton / Custom CUDA Kernels — ⚡ GPU kernel authoring
+............................................................
+  ✅ OpenAI Triton (custom GPU kernel DSL): triton==3.4.0 — OpenAI Triton — Linux only;
+    required by flash-attn and many CUDA kernels
+  ❌ triton-nightly (bleeding edge builds): triton-nightly
+  ❌ CUDA toolkit Python (full toolkit): cuda-toolkit
+
+Memory Efficiency & Quantization — ⚡ CUDA
+.........................................
+  ❌ flash-attn (FlashAttention-2/3, Ampere+): flash-attn — Requires Ampere+ GPU (CC
+    8.0+); prebuilt wheels at github.com/Dao-AILab
+  ❌ xformers (memory-efficient attention): xformers — Version must match torch exactly;
+    use --no-deps if conflicts arise
+  ✅ bitsandbytes (4-bit/8-bit quantization): bitsandbytes==0.45.5 — Requires CUDA 11.0+;
+    Turing+ (CC 7.5+) for best 4-bit quant kernels
+  ❌ auto-gptq (GPTQ 4-bit quantization): auto-gptq
+  ❌ autoawq (AWQ quantization): autoawq
+  ❌ optimum (HF optimization toolkit): optimum
+  ❌ optimum-nvidia (TensorRT-LLM bridge): optimum-nvidia
+  ❌ quanto (HF quantization): optimum-quanto
+  ✅ torchao (PyTorch native quantization): torchao==0.13.0
+
+Distributed Training — ⚡ CUDA + multi-GPU
+.........................................
+  ✅ DeepSpeed (ZeRO, pipeline parallelism): deepspeed==0.17.6 — Linux only; requires
+    CUDA + gcc + ninja for kernel compilation
+  ❌ fairscale (model/pipeline parallelism): fairscale
+  ❌ apex (NVIDIA mixed precision / fused ops): apex
+  ❌ colossalai (parallel AI training): colossalai
+  ❌ bagua (distributed training framework): bagua
+  ✅ torchrun (via torch, built-in launcher): torch==2.8.0+cu126 — CUDA support built-in;
+    requires CUDA-capable GPU + matching toolkit
+
+Vector Search — ⚡ GPU-Accelerated (CUDA)
+........................................
+  ❌ faiss-gpu (GPU-accelerated FAISS): faiss-gpu — Requires CUDA; faiss-cpu (CPU-only)
+    is listed separately in the CPU packages section
+
+Transformers / Diffusion / Training — ⚡ CUDA via torch.cuda
+...........................................................
+  ✅ transformers: transformers==4.56.2
+  ✅ tokenizers: tokenizers==0.22.1
+  ✅ safetensors: safetensors==0.6.2
+  ✅ accelerate: accelerate==1.10.1
+  ✅ torchmetrics: torchmetrics==1.5.2
+  ✅ peft: peft==0.17.1
+  ❌ trl: trl
+  ✅ diffusers: diffusers==0.35.1
+  ✅ timm: timm==1.0.20
+  ✅ sentence-transformers: sentence-transformers==5.1.1
+  ❌ ultralytics (YOLO): ultralytics
+  ❌ openai-whisper: openai-whisper
+  ✅ pytorch-lightning: pytorch-lightning==2.4.0
+  ✅ lightning: lightning==2.4.0
+  ✅ einops: einops==0.7.0
+  ✅ torchdata: torchdata==0.11.0
+  ❌ torchtext: torchtext
+  ✅ torchelastic (via torch): torch==2.8.0+cu126 — CUDA support built-in; requires CUDA-
+    capable GPU + matching toolkit
+
+LLM / Inference Runtimes — ⚡ CUDA (build-dependent)
+...................................................
+  ❌ llama-cpp-python (CUDA if GGML_CUDA=on): llama-cpp-python — CUDA build requires
+    CMAKE_ARGS='-DGGML_CUDA=on' at install time
+  ✅ ctranslate2 (CUDA build): ctranslate2==4.6.0
+  ❌ vllm (high-throughput CUDA inference): vllm — Requires Ampere+ GPU (CC 8.0+) for
+    optimal kernel performance
+  ❌ exllamav2 (ExLlamaV2 CUDA kernels): exllamav2
+  ❌ lmdeploy (turbomind CUDA backend): lmdeploy
+  ❌ text-generation-inference (HF TGI): text-generation-inference
+  ❌ sglang (structured generation LLM): sglang
+
+Profiling & Benchmarking — ⚡ CUDA profiling tools
+.................................................
+  ❌ torch-tb-profiler (TensorBoard profiler): torch-tb-profiler
+  ❌ scalene (CPU/GPU profiler): scalene
+  ❌ viztracer (trace visualization): viztracer
+  ❌ line-profiler (line-by-line timing): line-profiler
+  ❌ memory-profiler: memory-profiler
+
+Package presence — 🖥️  CPU-only (no CUDA acceleration)
+------------------------------------------------------
+
+Data Science / Numeric stack — 🖥️  CPU only
+...........................................
+  ✅ numpy: numpy==2.2.6
+  ✅ scipy: scipy==1.17.1
+  ✅ pandas: pandas==2.3.3
+  ✅ polars: polars==1.31.0
+  ✅ numba: numba==0.61.2
+  ✅ sympy: sympy==1.14.0
+  ✅ scikit-learn: scikit-learn==1.7.2
+  ✅ statsmodels: statsmodels==0.14.5
+  ✅ xgboost: xgboost==3.0.5
+  ✅ lightgbm: lightgbm==4.6.0.99
+  ✅ catboost: catboost==1.2.8
+  ✅ joblib: joblib==1.5.2
+  ✅ threadpoolctl: threadpoolctl==3.6.0
+
+Data Wrangling / Feature Engineering — 🖥️  CPU only
+...................................................
+  ✅ pyarrow: pyarrow==19.0.1
+  ✅ dask: dask==2025.7.0
+  ❌ vaex: vaex
+  ❌ great-expectations: great-expectations
+  ✅ feature-engine: feature-engine==1.9.3
+  ✅ imbalanced-learn: imbalanced-learn==0.14.0
+  ✅ category-encoders: category-encoders==2.9.0
+  ✅ scikit-image: scikit-image==0.25.2
+  ✅ distributed: distributed==2025.7.0
+
+Computer Vision / Media — 🖥️  CPU only
+......................................
+  ❌ opencv-python: opencv-python
+  ✅ pillow: Pillow==11.3.0
+  ✅ imageio: imageio==2.37.0
+  ❌ decord: decord
+  ❌ albumentations: albumentations
+  ✅ kornia: kornia==0.8.1
+  ✅ scikit-image: scikit-image==0.25.2
+  ✅ imagesize: imagesize==1.4.1
+  ❌ rawpy: rawpy
+
+NLP / Text Processing — 🖥️  CPU only
+....................................
+  ❌ spacy: spacy
+  ✅ nltk: nltk==3.9.1
+  ✅ gensim: gensim==4.4.0
+  ✅ textblob: textblob==0.19.0
+  ✅ regex: regex==2025.9.18
+  ✅ ftfy: ftfy==6.3.1
+  ✅ langdetect: langdetect==1.0.9
+  ✅ sentencepiece: sentencepiece==0.2.1
+  ✅ tiktoken: tiktoken==0.12.0
+  ✅ sentence-transformers: sentence-transformers==5.1.1
+
+Visualization — 🖥️  CPU only
+............................
+  ✅ matplotlib: matplotlib==3.10.6
+  ✅ seaborn: seaborn==0.13.2
+  ✅ plotly: plotly==6.3.0
+  ✅ bokeh: bokeh==3.8.0
+  ✅ altair: altair==5.5.0
+  ✅ umap-learn: umap-learn==0.5.9.post2
+  ✅ pydeck: pydeck==0.9.1
+  ✅ graphviz: graphviz==0.21
+
+Audio / Speech — 🖥️  CPU (preprocessing / IO)
+.............................................
+  ✅ librosa: librosa==0.11.0
+  ✅ soundfile: soundfile==0.13.1
+  ✅ audioread: audioread==3.0.1
+  ❌ pyaudio: PyAudio
+  ❌ whisper: openai-whisper
+
+TensorFlow Ecosystem Add-ons — 🖥️  CPU (data pipeline utilities)
+................................................................
+  ❌ tensorflow-datasets: tensorflow-datasets
+  ✅ tensorflow-io-gcs-filesystem: tensorflow-io-gcs-filesystem==0.37.1
+  ❌ tensorflow-probability: tensorflow-probability
+  ❌ tflite-runtime: tflite-runtime
+
+Datasets / Evaluation — 🖥️  CPU (data utilities)
+................................................
+  ❌ datasets: datasets
+  ❌ evaluate: evaluate
+  ✅ rouge-score: rouge-score==0.1.2
+  ✅ sacrebleu: sacrebleu==2.5.1
+  ❌ bert-score: bert-score
+
+Dev / Build Helpers — 🖥️  CPU tooling
+.....................................
+  ✅ setuptools: setuptools==70.0.0
+  ✅ wheel: wheel==0.45.1
+  ✅ packaging: packaging==24.2
+  ✅ cmake: cmake==4.1.2
+  ✅ ninja: ninja==1.13.0
+  ✅ tqdm: tqdm==4.67.1
+  ✅ rich: rich==13.8.1
+  ✅ pydantic: pydantic==2.11.9
+  ✅ pydantic-settings: pydantic-settings==2.10.1
+  ✅ python-dotenv: python-dotenv==1.1.1
+  ✅ pytest: pytest==8.4.2
+  ✅ ruff: ruff==0.13.1
+  ❌ mypy: mypy
+  ✅ click: click==8.3.0
+  ✅ requests: requests==2.32.5
+  ✅ httpx: httpx==0.28.1
+  ✅ aiohttp: aiohttp==3.12.15
+
+Package presence — 📓 Notebooks & Interactive Computing
+------------------------------------------------------
+
+Jupyter Core — 📓 Notebook server & kernels
+..........................................
+  ✅ JupyterLab: jupyterlab==4.4.10
+  ✅ Jupyter Notebook (classic): notebook==7.4.5
+  ✅ Jupyter Notebook v7+ (nbclassic): nbclassic==1.3.3
+  ✅ IPython kernel: ipykernel==7.1.0
+  ✅ IPython: ipython==9.5.0
+  ✅ jupyter-core: jupyter-core==5.8.1
+  ✅ jupyter-client: jupyter-client==8.6.3
+  ✅ jupyter-server: jupyter-server==2.17.0
+  ✅ nbformat: nbformat==5.10.4
+  ✅ nbconvert: nbconvert==7.16.6
+  ✅ traitlets: traitlets==5.14.3
+
+Jupyter AI & LLM Integration — 📓 AI-powered notebooks
+.....................................................
+  ✅ Jupyter AI: jupyter-ai==2.31.6
+  ✅ Jupyter AI Magics: jupyter-ai-magics==2.31.6
+  ❌ jupyter-copilot: jupyter-copilot
+  ❌ ipython-ai: ipython-ai
+
+Jupyter Extensions & UI — 📓 Productivity enhancements
+.....................................................
+  ✅ JupyterLab Git: jupyterlab-git==0.51.2
+  ✅ JupyterLab LSP (code completion): jupyter-lsp==2.3.0
+  ✅ python-lsp-server: python-lsp-server==1.13.1
+  ✅ JupyterLab Code Formatter: jupyterlab-code-formatter==3.0.2
+  ✅ JupyterLab Vim: jupyterlab-vim==4.1.4
+  ❌ JupyterLab Spellchecker: jupyterlab-spellchecker
+  ❌ aquirdturtle_collapsible_headings: aquirdturtle-collapsible-headings
+  ✅ nbdime (notebook diffing): nbdime==4.0.2
+  ❌ nbstripout: nbstripout
+
+Interactive Widgets — 📓 Rich output in notebooks
+................................................
+  ✅ ipywidgets: ipywidgets==8.1.7
+  ✅ widgetsnbextension: widgetsnbextension==4.0.14
+  ❌ ipympl (matplotlib widget): ipympl
+  ❌ ipyleaflet: ipyleaflet
+  ❌ bqplot: bqplot
+  ❌ ipyvuetify: ipyvuetify
+  ✅ plotly FigureWidget (via plotly): plotly==6.3.0
+
+Alternative / Complementary Notebooks — 📓
+.........................................
+  ❌ Marimo: marimo
+  ❌ Voila (notebook → web app): voila
+  ✅ Panel: panel==1.8.1
+  ✅ Streamlit: streamlit==1.51.0
+  ✅ Gradio: gradio==5.47.0
+  ❌ nbdev: nbdev
+  ❌ Quarto (via CLI; not a pip pkg): quarto
+
+Notebook Utilities — 📓 Testing, scheduling, execution
+.....................................................
+  ❌ papermill (parametrized execution): papermill
+  ❌ nbmake (pytest plugin): nbmake
+  ❌ jupyter-scheduler: jupyter-scheduler
+  ❌ nbval: nbval
+  ❌ testbook: testbook
+  ❌ jupytext (notebooks as scripts): jupytext
+
+Package presence — 🔬 MLOps
+--------------------------
+
+MLOps — Experiment Tracking & Model Management 🔬 
+.................................................
+  ❌ MLflow: mlflow
+  ✅ Weights & Biases: wandb==0.22.0
+  ❌ DVC (Data Version Control): dvc
+  ❌ ClearML: clearml
+  ❌ Comet ML: comet-ml
+  ❌ Neptune-Scale:  neptune-scale
+  ❌ Neptune (client): neptune
+  ❌ Guild AI: guildai
+  ✅ Sacred: sacred==0.8.7
+  ❌ Aim: aim
+  ✅ TensorBoard: tensorboard==2.20.0
+  ✅ Optuna: optuna==4.5.0
+  ✅ Ray Tune / Ray Train: ray==2.49.2
+  ✅ Hydra-core: hydra-core==1.3.2
+  ✅ Omegaconf: omegaconf==2.3.0
+  ✅ uvicorn: uvicorn==0.37.0
+  ✅ gunicorn: gunicorn==23.0.0
+
+MLOps — Pipelines & Orchestration 🔧
+...................................
+  ❌ ZenML: zenml
+  ❌ Metaflow: metaflow
+  ❌ Kedro: kedro
+  ❌ Prefect: prefect
+  ❌ Apache Airflow: apache-airflow
+  ❌ Luigi: luigi
+  ❌ Kubeflow Pipelines SDK: kfp
+  ❌ Flyte (flytekit): flytekit
+  ❌ Dagster: dagster
+  ❌ Ploomber: ploomber
+
+MLOps — Model Serving & Deployment 🚀
+....................................
+  ❌ BentoML: bentoml
+  ❌ Seldon Core: seldon-core
+  ✅ Ray Serve (via ray): ray==2.49.2
+  ✅ FastAPI (serving backbone): fastapi==0.118.0
+  ✅ Uvicorn (ASGI server): uvicorn==0.37.0
+  ❌ Triton client: tritonclient
+  ❌ ONNX Runtime (inference): onnxruntime
+  ❌ Torchserve: torchserve
+  ✅ Gradio (demo serving): gradio==5.47.0
+  ✅ Streamlit (demo serving): streamlit==1.51.0
+
+MLOps — Observability / Telemetry 📈
+...................................
+  ✅ OpenTelemetry API: opentelemetry-api==1.37.0
+  ✅ OpenTelemetry SDK: opentelemetry-sdk==1.37.0
+  ✅ OTel Semantic Conventions: opentelemetry-semantic-conventions==0.58b0
+  ✅ Prometheus client: prometheus-client==0.23.1
+
+Package presence — 🤖 Agentic AI Frameworks & Tools
+--------------------------------------------------
+
+AI/ML and Agentic AI — Core Orchestration Frameworks: Chains, Graphs, Crews & Multi-Agent Systems 🤖
+...................................................................................................
+  ✅ LangChain: langchain==0.3.27
+  ✅ LangChain Core: langchain-core==0.3.76
+  ✅ LangChain Community: langchain-community==0.3.29
+  ❌ LangGraph: langgraph
+  ❌ Strands Agents (AWS): strands-agents
+  ❌ Strands Agents Tools (AWS): strands-agents-tools
+  ❌ Bedrock AgentCore SDK (AWS): bedrock-agentcore
+  ❌ Bedrock AgentCore Starter Toolkit (AWS, optional): bedrock-agentcore-starter-toolkit
+  ❌ LlamaIndex: llama-index
+  ❌ LlamaIndex Core: llama-index-core
+  ❌ Llama Stack (Meta): llama-stack
+  ❌ Llama Stack Client (Meta): llama-stack-client
+  ❌ AutoGen AgentChat (Microsoft): autogen-agentchat
+  ❌ Microsoft Agent Framework (preview): agent-framework
+  ❌ Semantic Kernel (Microsoft): semantic-kernel
+  ❌ Databricks Agent Bricks: databricks-agents
+  ❌ CrewAI: crewai
+  ❌ Pydantic AI: pydantic-ai
+  ❌ Smolagents (Hugging Face): smolagents
+  ❌ Agency Swarm: agency-swarm
+  ❌ Haystack: farm-haystack
+
+AI/ML and Agentic AI — LLM Clients & Provider SDKs: Cloud, Local & Unified Model Access 🔌
+.........................................................................................
+  ✅ OpenAI: openai==1.109.1
+  ✅ Anthropic: anthropic==0.72.1
+  ✅ boto3 (AWS SDK — Bedrock access): boto3==1.40.71
+  ✅ botocore (AWS SDK core): botocore==1.40.71
+  ✅ AWS CLI: awscli==1.42.71
+  ❌ AWS CRT (optional, Bedrock streaming perf): awscrt
+  ❌ boto3-stubs type hints: boto3-stubs
+  ✅ Google GenAI SDK (Gemini): google-genai==1.38.0
+  ❌ Google GenerativeAI (deprecated Nov 2025): google-generativeai
+  ❌ Mistral AI: mistralai
+  ✅ Cohere: cohere==5.18.0
+  ✅ Together AI: together==1.5.30
+  ❌ Groq: groq
+  ❌ Replicate: replicate
+  ❌ LiteLLM: litellm
+  ✅ Hugging Face Hub (model downloads): huggingface-hub==0.35.3
+  ✅ Ollama: ollama==0.5.4
+
+AI/ML and Agentic AI — Memory, RAG & Vector Stores: Long-Term Context, Retrieval & Embeddings 🧠
+...............................................................................................
+  ❌ ChromaDB: chromadb
+  ❌ Qdrant client: qdrant-client
+  ❌ Weaviate client: weaviate-client
+  ❌ Pinecone: pinecone
+  ✅ FAISS (cpu): faiss-cpu==1.12.0
+  ❌ Milvus: pymilvus
+  ❌ LanceDB: lancedb
+  ❌ pgvector (Postgres vector extension client): pgvector
+  ❌ Mem0: mem0ai
+  ❌ Zep: zep-python
+  ❌ Txtai: txtai
+  ❌ Hnswlib: hnswlib
+  ❌ Annoy: annoy
+
+Runtime benchmarks & smoke tests  [depth=4: memory pressure (~3–6 min)]
+-----------------------------------------------------------------------
+  Legend
+  ------
+  ✅  Test passed — operation completed successfully on CUDA/GPU
+  🟠  Test ran but failed — operation attempted but errored out
+  ❌  Test skipped or could not start — framework missing or unavailable
+
+  Result detail indicators (inside the — description):
+  ⚡  Hardware acceleration detected (sparse faster than dense, >1.05×)
+  🔵  No hardware acceleration — sparse op slower than or equal to dense
+       (on Kepler/Maxwell GPUs without Sparse Tensor Cores)
+  🟠  Sub-operation warning — one step within a passing test had an issue
+  ❌  Sub-operation failure — one step within a passing test failed outright
+  ℹ️  Informational — context or detail about the result, not a pass/fail
+
+  Note: In matrix operations, 'dense' means every element is stored and computed;
+       'sparse' means many values are zero and only non-zeros are tracked. Zeroing out
+       large fractions of model weights (pruning) can reduce compute in training and
+       inference — but only if the hardware has dedicated sparse execution paths to skip
+       the zeros (e.g. NVIDIA Ampere's 2:4 Sparse Tensor Cores).
+  Note: ✅ on sparse tests means the test RAN, not that HW sparsity exists. Check
+       the ⚡/🔵 indicator in the detail for actual acceleration status.
+
+  ⚠️  DEPTH 4 — Memory pressure tests will intentionally exhaust GPU RAM.
+     Close other GPU-intensive apps (browsers with WebGL, games, etc.)
+     before running to get accurate ceilings and avoid system stalls.
+
+
+⚡ CUDA/GPU — PyTorch CUDA
+.........................
+  ℹ️  Test: Dense matrix multiply (GEMM) and Conv2d on PyTorch CUDA — confirms CUDA GPU
+       is reachable and executing float32 matrix math and convolutions at expected
+       speeds.
+  ✅ torch CUDA dense GEMM+conv — torch=2.8.0+cu126 | device=NVIDIA GeForce GTX 1060 |
+    float32 GEMM 2048×2048: 27.1ms ± 6.5ms (n=10) | float16 GEMM 2048×2048: 12.0ms ±
+    1.5ms (n=10) | bfloat16 GEMM 2048×2048: 11.7ms ± 0.1ms (n=10) | conv2d 64ch 224×224:
+    1.2ms ± 1.1ms (n=10)
+  ℹ️  Test: Tensor Core hardware detection — reports whether the GPU has dedicated
+  🟠 Tensor Core check — ❌ GPU 0 (NVIDIA GeForce GTX 1060, CC 6.1 Pascal): No Tensor
+    Cores — Tensor Cores were introduced with Volta (CC 7.0, e.g. Tesla V100). This GPU
+    has only standard CUDA cores. No TF32 / BF16 Tensor Core acceleration available
+    (TF32 and BF16 Tensor Cores require Ampere CC 8.0+).
+  ℹ️  Test: Sparse matrix multiply on PyTorch CUDA — probes CUDA sparse execution
+  ✅ torch CUDA sparse — ❌ 2:4 Structured Sparsity: NOT supported on this GPU (CC 6.1
+    Pascal). Hardware-accelerated 2:4 structured sparsity requires Ampere (CC 8.0+, e.g.
+    RTX 3080/3090, A100, RTX 40-series, H100). This GPU can run sparse math APIs
+    (COO/CSR) but lacks dedicated Sparse Tensor Core hardware to skip zero-valued
+    elements; sparse ops will be slower than dense. | COO density=1%: sparse=1.2ms
+    dense=1.0ms (🔵 no HW accel (0.85×)) | CSR density=1%: 3.8ms ✅ | 2:4 structured
+    density=1%: ❌ skipped — requires Ampere (CC 8.0+); this GPU is CC 6.1 (Pascal) | COO
+    density=5%: sparse=3.0ms dense=1.0ms (🔵 no HW accel (0.32×)) | CSR density=5%: 0.8ms
+    ✅ | 2:4 structured density=5%: ❌ skipped — requires Ampere (CC 8.0+); this GPU is CC
+    6.1 (Pascal) | COO density=10%: sparse=4.7ms dense=0.9ms (🔵 no HW accel (0.20×)) |
+    CSR density=10%: 1.3ms ✅ | 2:4 structured density=10%: ❌ skipped — requires Ampere
+    (CC 8.0+); this GPU is CC 6.1 (Pascal) | COO density=20%: sparse=8.5ms dense=0.9ms
+    (🔵 no HW accel (0.11×)) | CSR density=20%: 2.0ms ✅ | 2:4 structured density=20%: ❌
+    skipped — requires Ampere (CC 8.0+); this GPU is CC 6.1 (Pascal)
+  ℹ️  Test: Autograd (backpropagation) on CUDA — confirms gradient computation works
+       correctly on NVIDIA GPU, which is required for training (not just inference).
+  ✅ torch CUDA autograd [5-layer MLP 10 steps] — 10 steps=259ms final_loss=2.2982
+  ℹ️  Test: torch.compile availability — checks whether the graph compilation API is
+       present. On CUDA, torch.compile with mode='reduce-overhead' uses CUDA graph
+       capture to eliminate per-kernel launch overhead.
+  ✅ torch.compile available — compile test: 🟠 Found NVIDIA GeForce GTX 1060 which is too
+    old to be supported by the triton GPU compiler, which is used as the backend. Triton
+    only supports devices of CUDA Capability >= 7.0, but your device is of CUDA
+    capability 6.1  Set TORCHDYNAMO_VERBOSE=1 for the intern…
+
+⚡ CUDA/GPU — TensorFlow GPU
+...........................
+  ℹ️  Test: Dense matmul and Conv2d on TensorFlow GPU (CUDA) — confirms TensorFlow can
+       reach the CUDA device and dispatch compute correctly.
+  ✅ tensorflow GPU matmul/conv — tf=2.20.0 keras=3.12.0 GPUs=1 | GEMM 2048×2048: 27.3ms
+    ± 3.4ms (n=10) | conv2d 32ch: 32.1ms ± 2.0ms (n=10) | batch_norm: 9.6ms ✅ | float16
+    GEMM: 7.4ms ✅ | Keras fit 3 epochs: 1970ms ✅
+  ℹ️  Test: Sparse tensor operations via tf.sparse on CUDA — measures whether
+       TensorFlow sparse matmul runs on GPU or falls back to CPU, and compares timing
+       against dense.
+  ✅ tensorflow CUDA sparse — density=1%: sparse=3.4ms dense=2.5ms (🔵 0.72×) |
+    density=5%: sparse=6.5ms dense=2.5ms (🔵 0.38×) | density=10%: sparse=11.1ms
+    dense=3.1ms (🔵 0.28×) | density=20%: sparse=19.6ms dense=2.6ms (🔵 0.13×)
+  ℹ️  Test: TensorFlow GPU detection — confirms TensorFlow can see the CUDA GPU and
+       that tensorflow[and-cuda] or tensorflow-gpu is correctly installed.
+  ✅ tensorflow GPU detected — 1 GPU(s) visible (GPU detection validated in dense test
+    above)
+
+⚡ CUDA/GPU — JAX CUDA
+.....................
+  ℹ️  Test: Dense GEMM on JAX CUDA with JIT compilation and autograd — confirms XLA
+       compiles and dispatches to the CUDA backend, and that autodiff works on the CUDA
+       platform.
+  ✅ jax CUDA matmul — jax=0.4.38 platforms=gpu | float32 GEMM 2048×2048: 6.9ms ± 0.4ms
+    (n=10) | jit GEMM: 6.6ms ✅ | jit grad: 11.7ms ✅ | float16: 5.7ms ✅ | bfloat16: 6.8ms
+    ✅
+  ℹ️  Test: Sparse matmul via JAX BCOO format on CUDA — measures sparse op performance
+       relative to dense to reveal whether hardware sparse paths are active.
+  ✅ jax CUDA sparse (BCOO) — BCOO density=1%: sparse=2.8ms dense=11.1ms (⚡ 3.91×) | BCOO
+    density=5%: sparse=6.2ms dense=2.4ms (🔵 0.38×) | BCOO density=10%: sparse=14.5ms
+    dense=2.5ms (🔵 0.17×) | BCOO density=20%: sparse=24.4ms dense=2.4ms (🔵 0.10×)
+
+⚡ CUDA/GPU — CuPy
+.................
+  ℹ️  Test: CuPy CUDA array operations — confirms cupy can allocate GPU arrays and run
+       basic linear algebra. CuPy provides NumPy-compatible GPU arrays and is
+       foundational for RAPIDS and custom CUDA workflows.
+  ✅ cupy CUDA array ops — cupy=13.6.0 | CUDA=12090 | float32 GEMM 2048×2048: 5.1ms ±
+    0.5ms (n=10) | float16 GEMM: 6.0ms ✅ | ElementwiseKernel: 0.7ms ✅
+
+⚡ CUDA/GPU — RAPIDS (cuDF / cuML)
+.................................
+  ℹ️  Test: RAPIDS cuDF and cuML availability — confirms GPU-accelerated DataFrame and
+       ML
+  🟠 RAPIDS (cuDF + cuML) — ℹ️ GPU CC 6.1 (Pascal) meets RAPIDS minimum (Pascal CC 6.0+)
+    | ❌ cudf installed but import failed — likely a shared library or CUDA version
+    mismatch. Try: python -c "import cudf" to see the full error. Check LD_LIBRARY_PATH
+    includes your CUDA lib dir. (GPU CC 6.1 (Pascal) — confirm this meets cudf wheel
+    requirements) | ❌ cuml installed but import failed — likely same shared library /
+    CUDA version issue as cudf. Run: python -c "import cuml" to see the full traceback.
+
+⚡ CUDA/GPU — Inference / runtimes
+.................................
+  ℹ️  Test: ONNX Runtime with CUDA and TensorRT Execution Providers — confirms
+       onnxruntime-gpu is installed and can create inference sessions targeting the CUDA
+       device.
+  ✅ onnxruntime CUDA EP usable — providers=['TensorrtExecutionProvider',
+    'CUDAExecutionProvider', 'CPUExecutionProvider'] | matmul model: 🟠
+    [ONNXRuntimeError] : 2 : INVALID_ARGUMENT : Failed to load model with error:
+    /onnxruntime_src/onnxruntime/core/graph/model.cc:180
+    onnxruntime::Model::Model(onnx::ModelProto&&, const onnxruntime::PathString&, const
+    onnxruntime::IOnnxRuntimeOpSchemaRegistryList*…
+
+⚡ CUDA/GPU — Inference / runtimes (build-dependent)
+...................................................
+  ℹ️  Test: llama-cpp-python import and CUDA build detection — confirms the package is
+       importable and probes whether it was compiled with CUDA acceleration enabled
+       (GGML_CUDA=on / CMAKE_ARGS='-DGGML_CUDA=on').
+  🟠 llama.cpp (CUDA) build — llama-cpp-python not installed
+
+⚡ CUDA/GPU — FlashAttention
+...........................
+  ℹ️  Test: FlashAttention hardware compatibility check and import smoke test.
+  🟠 FlashAttention — ❌ FlashAttention-2: NOT supported on this GPU (CC 6.1 Pascal).
+    FlashAttention-2 requires Ampere (CC 8.0+), e.g. RTX 3080/3090, A100, RTX 40-series.
+    Pascal/Volta/Turing GPUs cannot run FlashAttention. Use standard scaled dot-product
+    attention (torch.nn.functional.scaled_dot_product_attention) as a fallback — it
+    lacks the IO-tiling optimization but works on all GPUs. | ❌ FlashAttention-3: NOT
+    supported — requires Hopper (CC 9.0+, e.g. H100). | ℹ️ flash_attn not installed —
+    GPU does not meet minimum hardware requirements for FlashAttention
+
+⚡ CUDA/GPU — Memory pressure (depth 4)
+......................................
+  ℹ️  Test: PyTorch CUDA memory pressure — finds the practical GPU VRAM ceiling by
+       allocating in 256 MB steps until OOM, then verifies memory is cleanly released
+       via empty_cache().
+
+    ⚠️  PyTorch CUDA memory pressure test (step=256MB, cap=5529MB / vram=6144MB)
+      Step   4:   1024 MB allocated (alloc=1040MB reserved=1202MB) ✅
+      Step   8:   2048 MB allocated (alloc=2064MB reserved=2226MB) ✅
+      Step  12:   3072 MB allocated (alloc=3088MB reserved=3250MB) ✅
+      Step  16:   4096 MB allocated (alloc=4112MB reserved=4274MB) ✅
+      Step  20:   5120 MB allocated (alloc=5136MB reserved=5298MB) ✅
+      Reached safety cap (5529MB) — stopping.
+  ✅ torch CUDA memory ceiling — peak_usable=5632MB | vram=6144MB | post-free=16MB ✅
+  ℹ️  Test: TensorFlow GPU memory pressure — finds the practical VRAM ceiling by
+       allocating in 256 MB steps until OOM, then verifies cleanup via gc and
+       clear_session.
+
+    ⚠️  TensorFlow CUDA memory pressure test (step=256MB, cap=5529MB)
+      Step   4:   1024 MB ✅
+      Step   8:   2048 MB ✅
+      Step  12:   3072 MB ✅
+      Step  16:   4096 MB ✅
+      Step  18: OOM at 4352MB → {{function_node __wrapped__Fill_device_/job:localhost/replica:0/task:0/device:GPU:0}} OOM when allocating tensor with shape[67108864] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc [Op:Fill] name:
+  ✅ tensorflow CUDA memory ceiling — peak_usable=4352MB | vram=6144MB
+
+Status Summary
+--------------
+  ✅ OS: Linux 6.6.87.2-microsoft-standard-WSL2  arch=x86_64  python=3.12.3
+  ✅ nvidia-smi: 1 GPU(s) detected
+  ✅ nvcc / CUDA toolkit: 12.8
+  ℹ️  cuDNN: 91002
+
+⚡ CUDA/GPU — Core frameworks
+............................
+  ✅ torch CUDA dense GEMM+conv — torch=2.8.0+cu126 | device=NVIDIA GeForce GTX 1060 |
+    float32 GEMM 2048×2048: 27.1ms ± 6.5ms (n=10) | float16 GEMM 2048×2048: 12.0ms ±
+    1.5ms (n=10) | bfloat16 GEMM 2048×2048: 11.7ms ± 0.1ms (n=10) | conv2d 64ch 224×224:
+    1.2ms ± 1.1ms (n=10)
+  ✅ torch.compile available — compile test: 🟠 Found NVIDIA GeForce GTX 1060 which is too
+    old to be supported by the triton GPU compiler, which is used as the backend. Triton
+    only supports devices of CUDA Capability >= 7.0, but your device is of CUDA
+    capability 6.1  Set TORCHDYNAMO_VERBOSE=1 for the intern…
+  ✅ tensorflow GPU matmul/conv — tf=2.20.0 keras=3.12.0 GPUs=1 | GEMM 2048×2048: 27.3ms
+    ± 3.4ms (n=10) | conv2d 32ch: 32.1ms ± 2.0ms (n=10) | batch_norm: 9.6ms ✅ | float16
+    GEMM: 7.4ms ✅ | Keras fit 3 epochs: 1970ms ✅
+  ✅ tensorflow GPU detected — 1 GPU(s) visible (GPU detection validated in dense test
+    above)
+  ✅ jax CUDA matmul — jax=0.4.38 platforms=gpu | float32 GEMM 2048×2048: 6.9ms ± 0.4ms
+    (n=10) | jit GEMM: 6.6ms ✅ | jit grad: 11.7ms ✅ | float16: 5.7ms ✅ | bfloat16: 6.8ms
+    ✅
+  ✅ cupy CUDA array ops — cupy=13.6.0 | CUDA=12090 | float32 GEMM 2048×2048: 5.1ms ±
+    0.5ms (n=10) | float16 GEMM: 6.0ms ✅ | ElementwiseKernel: 0.7ms ✅
+
+⚡ CUDA/GPU — RAPIDS & Inference
+...............................
+  🟠 RAPIDS (cuDF + cuML) — ℹ️ GPU CC 6.1 (Pascal) meets RAPIDS minimum (Pascal CC 6.0+)
+    | ❌ cudf installed but import failed — likely a shared library or CUDA version
+    mismatch. Try: python -c "import cudf" to see the full error. Check LD_LIBRARY_PATH
+    includes your CUDA lib dir. (GPU CC 6.1 (Pascal) — confirm this meets cudf wheel
+    requirements) | ❌ cuml installed but import failed — likely same shared library /
+    CUDA version issue as cudf. Run: python -c "import cuml" to see the full traceback.
+  ✅ onnxruntime CUDA EP usable — providers=['TensorrtExecutionProvider',
+    'CUDAExecutionProvider', 'CPUExecutionProvider'] | matmul model: 🟠
+    [ONNXRuntimeError] : 2 : INVALID_ARGUMENT : Failed to load model with error:
+    /onnxruntime_src/onnxruntime/core/graph/model.cc:180
+    onnxruntime::Model::Model(onnx::ModelProto&&, const onnxruntime::PathString&, const
+    onnxruntime::IOnnxRuntimeOpSchemaRegistryList*…
+  🟠 llama.cpp (CUDA) import — (not executed)
+
+⚡ CUDA/GPU — Memory pressure (depth 4)
+......................................
+  ✅ torch CUDA memory ceiling — peak_usable=5632MB | vram=6144MB | post-free=16MB ✅
+  ✅ tensorflow CUDA memory ceiling — peak_usable=4352MB | vram=6144MB
+
+CUDA ecosystem readiness (installed + torch.cuda.is_available())
+----------------------------------------------------------------
+  ✅ Transformers (transformers)
+  ✅ Diffusers (diffusers)
+  ✅ Accelerate (accelerate)
+  ✅ PyTorch Lightning (pytorch-lightning)
+  ✅ Lightning (lightning)
+  ❌ fastai (fastai) — not installed
+  ✅ timm (timm)
+  ✅ sentence-transformers (sentence-transformers)
+  ❌ Ultralytics (ultralytics) — not installed
+  ❌ openai-whisper (openai-whisper) — not installed
+  ❌ flash-attn (flash-attn) — not installed
+  ❌ xformers (xformers) — not installed
+  ✅ bitsandbytes (bitsandbytes)
+  ✅ DeepSpeed (deepspeed)
+  ❌ vLLM (vllm) — not installed
+  ✅ einops (einops)
+  ✅ peft (peft)
+  ❌ trl (trl) — not installed
+
+Dependency health
+-----------------
+  ✅ python -m pip check
+  ✅ No dependency issues detected (pip check passed).
+
+════════════════════════════════════════════════════════════════════
+════════════════════════════  📝  Notes  ════════════════════════════
+════════════════════════════════════════════════════════════════════
+
+  ⚡  CUDA / GPU Accelerated Packages
+
+  ℹ️  torch.cuda requires an NVIDIA GPU (Kepler CC 3.0+ minimum; Maxwell CC 5.0+ for
+       float16 Tensor Ops; Volta CC 7.0+ for mixed-precision with Tensor Cores; Ampere
+       CC 8.0+ for BF16 and TF32 Tensor Cores, FlashAttention, and 2:4 structured
+       sparsity). Verify with torch.cuda.get_device_capability(). If
+       torch.cuda.is_available() returns False, check that nvcc, the CUDA toolkit, and
+       cuDNN are installed and that CUDA_HOME/CUDA_PATH is set correctly.
+  ℹ️  Tensor Cores are dedicated matrix-multiply-accumulate (MMA) units on NVIDIA GPUs,
+       separate from standard CUDA cores. They were first introduced with Volta (CC 7.0,
+       Tesla V100) and deliver dramatically higher FP16 throughput for deep learning.
+       Turing (CC 7.5, RTX 20xx/T4) added INT8/INT4 Tensor Cores. Ampere (CC 8.0+,
+       A100/RTX 30xx) added BF16 and TF32 Tensor Cores — TF32 gives near-FP32 accuracy
+       at FP16 Tensor Core speeds and is used automatically by PyTorch
+       (torch.backends.cuda.matmul.allow_tf32=True by default on Ampere+). Ada Lovelace
+       (CC 8.9, RTX 40xx) and Hopper (CC 9.0, H100) added FP8 Tensor Cores. Blackwell
+       (CC 10+, B100/B200) introduced FP4/FP6 Tensor Cores. GPUs before Volta (Pascal CC
+       6.x and earlier) have no Tensor Cores at all.
+  ℹ️  2:4 Structured Sparsity (also called N:M sparsity or Sparse Tensor Cores) was
+       introduced with Ampere (CC 8.0+, A100/RTX 3090). The hardware enforces a pattern
+       where exactly 2 of every 4 consecutive weight values are non-zero; this allows
+       the Sparse Tensor Core engine to skip the zero-valued multiplications with
+       dedicated hardware. In practice, a pruned+compressed 2:4 sparse model can achieve
+       up to 2× GEMM throughput vs the dense baseline — halving inference latency or
+       training time for matrix-heavy layers. Pre-Ampere GPUs (Pascal CC 6.x, Volta CC
+       7.0, Turing CC 7.5) have no Sparse Tensor Cores; sparse ops on those
+       architectures use software indexing and are typically slower than dense. Use
+       torch.ao.sparsity or torch.sparse.to_sparse_semi_structured() to apply 2:4
+       sparsity in PyTorch; NVIDIA cuSPARSELt is the underlying library.
+  ℹ️  TensorFlow GPU support is via tensorflow[and-cuda] (recommended for CUDA 12.x
+       installs) or the legacy tensorflow-gpu package. An empty GPU list from
+       tf.config.list_physical_devices('GPU') usually means a wheel/toolkit mismatch —
+       the TensorFlow wheel was built against a different CUDA version than what is
+       installed. Run 'python -c "import tensorflow as tf;
+       print(tf.sysconfig.get_build_info())"' to see which CUDA version the wheel
+       expects, and cross-reference with your nvcc --version output.
+  ℹ️  JAX CUDA support requires installing jax[cuda12] (for CUDA 12.x) or
+       jax[cuda11_pip] (for CUDA 11.x), which pulls in the correct jaxlib CUDA wheel
+       automatically. The plain 'pip install jax' installs a CPU-only build. JAX uses
+       XLA to JIT-compile operations to CUDA kernels, producing excellent throughput for
+       large matrix ops and making JAX one of the fastest options for research-scale
+       CUDA workloads. Verify with jax.devices() — GPU devices show platform='gpu'.
+  ℹ️  onnxruntime-gpu includes both the CUDA Execution Provider and the TensorRT
+       Execution Provider, and replaces the CPU-only onnxruntime package. Install one or
+       the other, not both. Run 'python -c "import onnxruntime as ort;
+       print(ort.get_available_providers())"' to confirm. CUDAExecutionProvider offloads
+       subgraphs to CUDA; TensorrtExecutionProvider further optimizes via TensorRT
+       (requires the TensorRT SDK).
+  ℹ️  llama-cpp-python CUDA acceleration requires building from source with
+       GGML_CUDA=on: CMAKE_ARGS='-DGGML_CUDA=on' pip install llama-cpp-python --no-
+       binary :all:. Pre-built PyPI wheels are CPU-only. Use 'ldd <module>.so | grep
+       libcuda' on Linux to confirm CUDA linkage. Runtime log 'ggml_cuda_init' confirms
+       a CUDA build loaded successfully.
+  ℹ️  FlashAttention is an IO-aware, memory-efficient exact attention algorithm (Dao et
+       al., 2022/2023) that rewrites the softmax attention computation to avoid
+       materializing the full N×N attention matrix in HBM (GPU DRAM). Instead, it tiles
+       the Q/K/V matrices into SRAM (on-chip cache, ~100× faster bandwidth) using a two-
+       pass online softmax algorithm, dramatically reducing memory reads/writes.
+       FlashAttention-2 achieves ~2-4× wall-clock speedup over naive PyTorch attention
+       on Ampere+ and supports arbitrary sequence lengths with O(N) memory instead of
+       O(N²). FlashAttention-3 targets Hopper (H100, CC 9.0) specifically, using FP8
+       Tensor Cores and async warpgroup pipelines for additional speedup. Hardware
+       requirements: FlashAttention-2 requires Ampere (CC 8.0+, e.g. RTX 3080/3090,
+       A100, RTX 40xx); pre-Ampere GPUs (Pascal CC 6.x, Volta CC 7.0, Turing CC 7.5)
+       cannot run FlashAttention. Fallback: use
+       torch.nn.functional.scaled_dot_product_attention() which has a math-equivalent
+       CPU/CUDA fallback for all GPUs (no IO tiling, but correct). Installation: pre-
+       built wheels available at github.com/Dao-AILab/flash-attention/releases; building
+       from source takes 10-30 minutes.
+  ℹ️  bitsandbytes provides 8-bit and 4-bit quantized linear layers that dramatically
+       reduce VRAM requirements for large model inference. Requires CUDA 11.0+. Best
+       performance requires Turing (CC 7.5+) for 4-bit kernels. On Linux, standard pip
+       install works. On Windows, use bitsandbytes-windows or the pre-built wheel from
+       the GitHub releases page.
+  ℹ️  RAPIDS (cuDF, cuML, cuGraph, cuSpatial) requires CUDA 12.x and a Pascal+ GPU (CC
+       6.0+). Install via conda from the rapidsai channel (fastest and most reliable) or
+       pip with the cudf-cu12, cuml-cu12, etc. packages. RAPIDS cuDF provides GPU-
+       accelerated pandas-compatible DataFrames; cuML provides GPU-accelerated scikit-
+       learn algorithms; cuGraph provides GPU-accelerated graph analytics.
+  ℹ️  Transformers, Diffusers, and similar high-level libraries use torch.cuda as their
+       GPU backend — they are framework-agnostic and will automatically use CUDA if
+       torch.cuda.is_available() returns True. Accelerate (Hugging Face) is the key
+       bridge library for device placement and mixed-precision training. DeepSpeed adds
+       ZeRO optimizer stages (1/2/3) and pipeline parallelism for training models that
+       don't fit on a single GPU.
+
+  🖥️   CPU-Only Packages
+
+  ℹ️  CPU-only packages (numpy, scipy, faiss-cpu, opencv, pandas, scikit-learn, etc.)
+       are listed separately and have no CUDA GPU path. On Linux x86-64, numpy and scipy
+       are typically built with OpenBLAS or MKL, which provides multithreaded
+       BLAS/LAPACK acceleration. For maximum CPU linear algebra performance, install
+       intel-numpy or numpy with MKL on Intel hardware (conda install numpy mkl).
+  ℹ️  faiss-gpu provides GPU-accelerated vector search via CUDA and is included in the
+       CUDA packages section. faiss-cpu is the CPU-only alternative — solid choice for
+       environments without GPU or where VRAM is at a premium. For billion-scale vector
+       search, consider dedicated vector databases (Qdrant, Weaviate, Milvus) which can
+       leverage CUDA for indexing while serving from CPU.
+
+  📓  Notebooks & Interactive Computing
+
+  ℹ️  Notebook packages (JupyterLab, Jupyter Notebook, etc.) are CPU/network-bound —
+       they orchestrate ML work and render outputs but do not perform GPU computation
+       themselves. The GPU acceleration in notebooks comes entirely from the ML
+       framework (PyTorch, TF, JAX) being called inside the notebook cells. Jupyter AI
+       adds LLM-powered assistance directly in the notebook interface but requires a
+       separate API key or local model backend.
+  ℹ️  Jupyter AI requires an API key or local model backend configured separately.
+       Supported backends include OpenAI, Anthropic Claude, Google Gemini, Amazon
+       Bedrock, and local models via Ollama or llama-cpp-python. Configure the backend
+       in JupyterLab under the Jupyter AI panel settings, or via the JUPYTER_AI_MODEL_ID
+       and related environment variables. Without a configured backend the extension
+       will load but all AI features will be non-functional.
+
+  🔬  MLOps — Experiment Tracking, Pipelines & Model Serving
+
+  ℹ️  MLOps packages (MLflow, Weights & Biases, DVC, ZenML, etc.) are CPU/network-bound
+       orchestration and tracking tools — they do not perform GPU computation themselves
+       but are essential infrastructure for managing the full ML lifecycle. MLflow and
+       W&B handle experiment tracking and model registry; DVC handles data and model
+       versioning via git-like semantics; pipeline orchestrators like ZenML, Metaflow,
+       Kedro, and Prefect manage reproducible training workflows. Most of these tools
+       are framework-agnostic and work equally well with PyTorch, TensorFlow, and JAX.
+       For CUDA environments, the most practical lightweight stack is MLflow or W&B for
+       tracking plus DVC for data versioning.
+
+  🤖  Agentic AI — Frameworks, LLM Clients & Vector Stores
+
+  ℹ️  Agentic AI frameworks (LangChain, LlamaIndex, AutoGen, CrewAI, etc.) are
+       CPU/network-bound orchestration libraries — the heavy compute happens inside the
+       LLM being called, not in the framework itself. On NVIDIA GPU machines, local LLM
+       inference for agentic workloads is best served by vLLM (for high-throughput
+       serving), llama-cpp-python (CUDA build), or Ollama as the model backend.
+       LangGraph extends LangChain with stateful graph-based agent workflows and is
+       increasingly the preferred approach for multi-step agents. For RAG pipelines,
+       faiss-gpu, Qdrant, and Weaviate are strong vector store options that can leverage
+       CUDA for embedding and index operations.
+  ℹ️  AWS Strands Agents is a tool-first agentic framework that uses a model-driven
+       loop where the LLM itself decides which tools to call and in what order, rather
+       than following a predefined graph or chain. It integrates natively with Amazon
+       Bedrock as its default LLM backend but supports other providers including
+       Anthropic Claude directly, OpenAI, and local models via Ollama. Strands is
+       particularly well-suited for building production-grade agents with large tool
+       libraries — its architecture scales cleanly from a handful of tools to 100+
+       without the prompt engineering overhead that frameworks like LangChain require
+       when tool counts grow large.
+  ℹ️  Amazon Bedrock Agents (classic) — the original managed agent service with Action
+       Groups and Knowledge Bases — has no separate pip package. It is accessed entirely
+       via boto3 using the 'bedrock-agent' and 'bedrock-agent-runtime' service clients,
+       which are included in boto3. 'bedrock-agentcore' is the newer production
+       deployment SDK that wraps any agent framework (Strands, LangGraph, CrewAI, etc.)
+       for serverless deployment on AWS.
+  ℹ️  Amazon Bedrock Knowledge Bases uses boto3 (listed in the LLM Clients section) —
+       no separate pip package is needed.
+  ℹ️  AWS CLI v2 is typically installed as a standalone system package (via apt, yum,
+       or the official installer), not via pip into a venv — an ❌ in this report is
+       expected and normal. To install into your venv explicitly: pip install awscli.
+  ℹ️  Google's generative AI Python package was renamed — 'google-generativeai' reached
+       end-of-life on November 30, 2025 and is replaced by 'google-genai' (pip install
+       google-genai). The new package unifies Gemini API access for both AI Studio and
+       Vertex AI users into a single SDK.
+  ℹ️  Microsoft Phi (Phi-3, Phi-4) and other open-weight models from Meta, Mistral, and
+       Google are not standalone pip packages — they are model weights hosted on Hugging
+       Face Hub and accessed via the 'transformers' and 'huggingface_hub' packages. On
+       NVIDIA GPUs, these models run via PyTorch CUDA with optional quantization via
+       bitsandbytes or auto-gptq for reduced VRAM usage.
+
+  🔧  General
+
+  ℹ️  Some packages may be installed at the system level (via apt/yum/dnf) rather than
+       pip — and will show as ❌ in this report even if they are present. Common examples
+       include: AWS CLI (awscli), git, cmake, ffmpeg, CUDA toolkit, cuDNN, and other
+       system-level tools managed outside Python virtual environments. This checker uses
+       pip/importlib.metadata exclusively for package detection and cannot see system
+       packages. To make a package appear as ✅ in this report, install it into your
+       active virtual environment via 'pip install <package>'.
+  ℹ️  CUDA version mismatch is the most common cause of GPU failures on Linux. The CUDA
+       version your PyTorch/TF/JAX wheel was compiled against must be compatible with
+       your installed CUDA toolkit and GPU driver. Check: nvcc --version (toolkit),
+       nvidia-smi (driver + max CUDA), torch.version.cuda (what PyTorch expects). Driver
+       backward compatibility means a driver for CUDA 12.x can run code compiled for any
+       earlier CUDA version, but not newer.
+
+  🔍  Audit Scope
+
+  ℹ️  This script audits the active Python environment only — specifically, whichever
+       Python interpreter you used to run it (e.g. 'python3 ml_cuda_detective.py').
+       Package detection uses importlib.metadata, which reads the dist-info directories
+       of the current environment. This means the results reflect exactly what is pip-
+       installable and importable in that one environment, and nothing else.
+  ℹ️  pip-managed packages in a virtual environment (venv, virtualenv) or the system
+       Python site-packages are fully visible and will appear as ✅ or ❌ in the report.
+       This is the normal, expected case — run the script from inside your active venv
+       for accurate results for that environment.
+  ℹ️  pipx installs each tool into its own isolated venv, entirely separate from any
+       other Python environment. Packages installed via pipx are completely invisible to
+       this script — even if you run the script from the same user account. The sanity
+       check section detects pipx itself and counts how many pipx apps are installed,
+       but it never inspects what packages are inside those pipx-managed venvs. To check
+       a pipx-managed environment, you would need to run the script via 'pipx run' or
+       activate the pipx venv directly.
+  ℹ️  conda environments are partially visible depending on how you run the script. If
+       you activate a conda environment first ('conda activate myenv') and then run
+       'python ml_cuda_detective.py', the script sees all packages in that conda
+       environment — because conda envs are standard Python environments and
+       importlib.metadata finds them normally. However, if you run the script from a
+       different environment (e.g. a venv), packages in any conda env — including the
+       base env — are not visible. Conda-installed packages do not have a separate
+       detection path in this script; they are found only if they are in the currently
+       active environment.
+  ℹ️  System-level packages installed via apt, yum, dnf, brew, or other OS package
+       managers are never visible to this script, regardless of which Python environment
+       is active. This includes system-managed Python packages, CUDA toolkit, cuDNN,
+       cmake, ffmpeg, and similar tools. They will always appear as ❌ here even when
+       fully installed. The CUDA toolkit and cuDNN are checked separately via nvcc
+       --version and header file inspection in the sanity checks section, not through
+       pip.
+  ℹ️  Multiple environment strategy: if you maintain several Python environments (e.g.
+       one venv per project, plus a base conda env), run this script once from each
+       environment to get a separate inventory report per environment. Pair
+       SAVE_REPORT=True with a descriptive REPORT_DIR path to keep each run's output for
+       later comparison.
+
+════════════════════════════════════════════════════════════════════
+═══════════════════  📚  Annotated Bibliography  ════════════════════
+════════════════════════════════════════════════════════════════════
+
+  References are organized by topic section, mirroring the Notes
+  footnotes above. IEEE citation format. URLs verified 2025–2026.
+
+  ── 1. CUDA Architecture & GPU Programming Model ──────────────────────────
+
+  ℹ️  [1] NVIDIA Corporation, "CUDA C++ Programming Guide," NVIDIA Developer
+       Documentation, 2024. [Online]. Available: https://docs.nvidia.com/cuda/cuda-c-
+       programming-guide/ — The official and authoritative reference for the CUDA
+       parallel computing platform and programming model. Covers the thread/block/grid
+       hierarchy, memory spaces (global, shared, registers, constant, texture), compute
+       capability definitions, warp execution, and the full runtime API. Essential
+       reading for any developer targeting NVIDIA GPU acceleration.
+  ℹ️  [2] NVIDIA Corporation, "CUDA Toolkit Documentation," NVIDIA Developer, 2025.
+       [Online]. Available: https://docs.nvidia.com/cuda/ — Top-level index for all CUDA
+       Toolkit documentation including the Best Practices Guide, cuBLAS, cuDNN,
+       cuSPARSE, NVCC compiler reference, and architecture-specific tuning guides. This
+       is the canonical entry point for the full NVIDIA GPU software stack.
+  ℹ️  [3] NVIDIA Corporation, "CUDA C++ Best Practices Guide," NVIDIA Developer
+       Documentation, 2024. [Online]. Available: https://docs.nvidia.com/cuda/cuda-c-
+       best-practices-guide/ — Companion to the Programming Guide, focused entirely on
+       performance optimization. Covers memory coalescing, occupancy tuning,
+       instruction-level optimization, and multi-GPU scaling. The roofline model and
+       memory bandwidth ceiling analysis chapters are particularly relevant for ML
+       workload tuning.
+
+  ── 2. NVIDIA GPU Architecture Whitepapers ─────────────────────────────────
+
+  ℹ️  [4] NVIDIA Corporation, "NVIDIA Tesla V100 GPU Architecture: The World's Most
+       Advanced Datacenter GPU," NVIDIA Whitepaper WP-08608-001 v1.1, Aug. 2017.
+       [Online]. Available: https://images.nvidia.com/content/volta-
+       architecture/pdf/volta-architecture-whitepaper.pdf — Introduces the Volta GV100
+       architecture and, critically, the first-ever Tensor Cores. Provides detailed SM-
+       level diagrams showing the 8 Tensor Cores per SM (4 TC/SM in the actual
+       production V100 SXM2 with 80 SMs), the independent thread scheduling model, and
+       second-generation NVLink topology. The primary reference for Tensor Core origins.
+  ℹ️  [5] NVIDIA Corporation, "NVIDIA Turing Architecture Whitepaper," NVIDIA
+       Whitepaper WP-09402-001, Sept. 2018. [Online]. Available:
+       https://images.nvidia.com/aem-dam/en-zz/Solutions/design-
+       visualization/technologies/turing-architecture/NVIDIA-Turing-Architecture-
+       Whitepaper.pdf — Introduces the TU10x family (RTX 2080/T4) with second-generation
+       Tensor Cores adding INT8 and INT4 compute modes. Also introduces RT Cores for
+       hardware ray tracing. Defines Compute Capability 7.5 and the architectural
+       underpinning for INT8 inference acceleration that enables quantized LLM inference
+       on Turing hardware.
+  ℹ️  [6] NVIDIA Corporation, "NVIDIA A100 Tensor Core GPU Architecture," NVIDIA
+       Whitepaper, May 2020. [Online]. Available: https://images.nvidia.com/aem-dam/en-
+       zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf — Defines the
+       Ampere GA100 architecture (CC 8.0), third-generation Tensor Cores with TF32 and
+       BF16, structural 2:4 sparsity via Sparse Tensor Cores, Multi-Instance GPU (MIG),
+       and third-generation NVLink/NVSwitch. This whitepaper is the primary reference
+       for TF32 (near-FP32 accuracy at FP16 Tensor Core speed), 2:4 sparsity, and the
+       MIG virtualization feature described in the sanity checks.
+  ℹ️  [7] NVIDIA Corporation, "NVIDIA Ampere GA102 GPU Architecture," NVIDIA
+       Whitepaper, Sept. 2020. [Online]. Available:
+       https://www.nvidia.com/content/PDF/nvidia-ampere-ga-102-gpu-architecture-
+       whitepaper-v2.pdf — Covers the consumer-side Ampere architecture (RTX 3090, RTX
+       3080), the GA102 die with Compute Capability 8.6. Explains the higher CUDA core
+       count per SM vs. the GA100 (128 vs. 64 FP32 cores/SM), the 2x FP32 datapath, and
+       the inclusion of Sparse Tensor Cores. Essential for understanding why A100 CC 8.0
+       and RTX 3090 CC 8.6 have different CUDA core counts per SM despite both being
+       'Ampere.'
+  ℹ️  [8] NVIDIA Corporation, "NVIDIA Hopper Architecture In-Depth," NVIDIA Technical
+       Blog, Mar. 2022. [Online]. Available: https://developer.nvidia.com/blog/nvidia-
+       hopper-architecture-in-depth/ — Official deep-dive into the H100 Hopper
+       architecture (CC 9.0): fourth-generation Tensor Cores with FP8, the Transformer
+       Engine for dynamic precision selection, NVLink Switch interconnect for 256-GPU
+       clusters, Thread Block Clusters (distributed shared memory), and the Confidential
+       Computing engine. The definitive reference for H100 capabilities and the
+       Transformer Engine.
+  ℹ️  [9] NVIDIA Corporation, "NVIDIA H100 Tensor Core GPU Architecture," NVIDIA
+       Whitepaper v1.01, Mar. 2022. [Online]. Available:
+       https://resources.nvidia.com/en-us-data-center-overview-mc/en-us-data-center-
+       overview/gtc22-whitepaper-hopper — The formal H100 architecture whitepaper,
+       companion to [8]. Contains exact SM counts (132 SMs on full GH100), Tensor Core
+       throughput tables by data type, memory subsystem specifications (HBM3 at 3 TB/s),
+       and MIG configurations. Cross-reference with [8] for architectural narrative.
+  ℹ️  [10] NVIDIA Corporation, "NVIDIA Ampere Architecture In-Depth," NVIDIA Technical
+       Blog, May 2020. [Online]. Available: https://developer.nvidia.com/blog/nvidia-
+       ampere-architecture-in-depth/ — Blog companion to the A100 whitepaper [6],
+       providing narrative context around the architectural decisions: why TF32 was
+       chosen over pure FP32, how MIG partitioning works in practice, and the motivation
+       for third-generation NVLink. Useful for understanding the design philosophy that
+       drives automatic mixed precision in PyTorch (allow_tf32=True default on Ampere+).
+
+  ── 3. Tensor Cores & Mixed Precision Training ─────────────────────────────
+
+  ℹ️  [11] NVIDIA Corporation, "Training With Mixed Precision," NVIDIA Deep Learning
+       Performance Guide, 2024. [Online]. Available:
+       https://docs.nvidia.com/deeplearning/performance/mixed-precision-
+       training/index.html — The canonical NVIDIA documentation for Automatic Mixed
+       Precision (AMP) training. Explains the loss scaling algorithm required to prevent
+       FP16 underflow, how to enable AMP in PyTorch (torch.amp) and TensorFlow, and
+       which operations run in FP16 vs. FP32 master weights. Required reading before
+       enabling AMP in any training pipeline.
+  ℹ️  [12] NVIDIA Corporation, "NVIDIA Tensor Core GPU Architecture," NVIDIA Technical
+       Blog, 2020. [Online]. Available: https://developer.nvidia.com/blog/programming-
+       tensor-cores-cuda-9/ — Introduces the developer-facing programming model for
+       Tensor Cores in CUDA 9. Explains the wmma (warp-level matrix multiply-accumulate)
+       API, fragment types, and the constraints on matrix dimensions (multiples of 16)
+       for efficient Tensor Core utilization. Foundational for understanding why model
+       dimensions in deep learning are typically chosen as multiples of 8 or 16.
+  ℹ️  [13] P. Micikevicius et al., "Mixed Precision Training," in Proc. International
+       Conference on Learning Representations (ICLR), 2018. [Online]. Available:
+       https://arxiv.org/abs/1710.03740 — The seminal academic paper introducing the
+       mixed-precision training methodology (FP16 compute + FP32 master weights + loss
+       scaling). Published by NVIDIA researchers, this paper established the algorithmic
+       foundation upon which PyTorch AMP and TensorFlow mixed precision are built.
+       Demonstrates that FP16 training matches FP32 accuracy across CNNs, RNNs, and
+       LSTMs when combined with loss scaling.
+
+  ── 4. FlashAttention ───────────────────────────────────────────────────────
+
+  ℹ️  [14] T. Dao, D. Y. Fu, S. Ermon, A. Rudra, and C. Ré, "FlashAttention: Fast and
+       Memory-Efficient Exact Attention with IO-Awareness," in Advances in Neural
+       Information Processing Systems (NeurIPS), 2022. [Online]. Available:
+       https://arxiv.org/abs/2205.14135 — The foundational paper introducing IO-aware
+       attention computation. Proposes tiling to reduce HBM reads/writes, achieving
+       exact attention (no approximation) with subquadratic memory. Delivers 15% end-to-
+       end speedup on BERT-Large and 3x speedup on GPT-2. Required reading for
+       understanding why flash-attn dramatically accelerates transformer training;
+       directly relevant to the FlashAttention smoke test in this report.
+  ℹ️  [15] T. Dao, "FlashAttention-2: Faster Attention with Better Parallelism and Work
+       Partitioning," in Proc. International Conference on Learning Representations
+       (ICLR), 2024. [Online]. Available: https://arxiv.org/abs/2307.08691 — Extends
+       FlashAttention with improved thread-block parallelism across sequence length,
+       reducing non-matmul FLOPs and increasing GPU utilization from 25–40% to 50–73% of
+       peak FLOPs/s on A100. Achieves up to 225 TFLOPs/s per A100 for GPT-style
+       training. The version most widely deployed in production transformer training as
+       of 2024; what this report's FA-2 smoke test targets.
+  ℹ️  [16] J. Shah, G. Bikshandi, Y. Zhang, V. Thakkar, P. Ramani, and T. Dao,
+       "FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-
+       precision," arXiv preprint arXiv:2407.08608, 2024. [Online]. Available:
+       https://arxiv.org/abs/2407.08608 — Introduces a Hopper (H100)-specific
+       FlashAttention implementation using asynchronous warp-specialization
+       (producer/consumer pipelines), TMA (Tensor Memory Accelerator), and FP8 support.
+       Achieves up to 1.5× speedup over FA-2 on H100 by overlapping GEMM and softmax
+       stages. Explains why FA-3 requires CC 9.0 (Hopper), while FA-2 works from CC
+       8.0+.
+
+  ── 5. 2:4 Structured Sparsity ─────────────────────────────────────────────
+
+  ℹ️  [17] NVIDIA Corporation, "Exploiting NVIDIA Ampere Structured Sparsity with
+       cuSPARSELt," NVIDIA Technical Blog, Dec. 2020. [Online]. Available:
+       https://developer.nvidia.com/blog/exploiting-ampere-structured-sparsity-with-
+       cusparselt/ — The primary NVIDIA introduction to 2:4 structured (N:M) sparsity
+       and the cuSPARSELt library. Explains the hardware enforcement of the 2-nonzero-
+       in-4 pattern, the compression format (data + 2-bit index metadata), and the
+       workflow: prune → compress → SpMMA via Sparse Tensor Cores. Provides performance
+       benchmarks vs. dense cuBLAS on A100 for BERT-Large layer sizes.
+  ℹ️  [18] NVIDIA Corporation, "cuSPARSELt: A High-Performance CUDA Library for Sparse
+       Matrix-Matrix Multiplication," NVIDIA Developer Documentation, 2024. [Online].
+       Available: https://docs.nvidia.com/cuda/cusparselt/ — Official API documentation
+       for cuSPARSELt, NVIDIA's library for 2:4 structured sparse GEMM. Lists supported
+       SM architectures (8.0, 8.6, 8.7, 8.9, 9.0, 10.x), data types, and the full API
+       surface. The authoritative reference for why 2:4 sparsity requires Ampere CC 8.0+
+       and is absent from Pascal and Turing GPUs.
+  ℹ️  [19] PyTorch Team, "Accelerating Neural Network Training with Semi-Structured
+       (2:4) Sparsity," PyTorch Blog, 2023. [Online]. Available:
+       https://pytorch.org/blog/accelerating-neural-network-training/ — Documents
+       PyTorch's native semi-structured sparsity support
+       (torch.sparse.to_sparse_semi_structured), demonstrating 1.6× GEMM speedup and 10%
+       end-to-end speedup on segment-anything inference. Explains how the PyTorch team
+       developed a custom prune+compress kernel 10× faster than cuSPARSELt's compression
+       utility. The practical implementation guide for the torch.ao.sparsity workflow
+       referenced in the Notes.
+  ℹ️  [20] T. Mishra, E. Nurvitadhi, J. J. Cook, and D. Marr, "NVIDIA Accelerating
+       Sparsity in the NVIDIA Ampere Architecture," NVIDIA Technical Blog, 2020.
+       [Online]. Available: https://developer.nvidia.com/blog/accelerating-inference-
+       with-sparsity-using-ampere-and-tensorrt/ — Describes the end-to-end sparsity
+       workflow using TensorRT: ASP (Automatic SParsity) library for pruning,
+       retraining, and compression, followed by TensorRT deployment using Sparse Tensor
+       Cores. Shows accuracy recovery results for vision and NLP models and explains why
+       2:4 sparsity loses less accuracy than unstructured pruning to the same 50%
+       density target.
+
+  ── 6. Model Quantization & bitsandbytes ───────────────────────────────────
+
+  ℹ️  [21] T. Dettmers, M. Lewis, Y. Belkada, and L. Zettlemoyer, "LLM.int8(): 8-bit
+       Matrix Multiplication for Transformers at Scale," in Advances in Neural
+       Information Processing Systems (NeurIPS), 2022. [Online]. Available:
+       https://arxiv.org/abs/2208.07339 — Introduces the LLM.int8() quantization scheme
+       that enables inference of 175B-parameter models at half the memory cost with no
+       accuracy loss. Key insight: emergent outlier features in transformer activations
+       (>6B parameters) require mixed-precision decomposition — 16-bit for the 0.1%
+       outlier dimensions, 8-bit for the remainder. This is the academic foundation for
+       the bitsandbytes library's core functionality.
+  ℹ️  [22] T. Dettmers, A. Pagnoni, A. Holtzman, and L. Zettlemoyer, "QLoRA: Efficient
+       Finetuning of Quantized LLMs," in Advances in Neural Information Processing
+       Systems (NeurIPS), 2023. [Online]. Available: https://arxiv.org/abs/2305.14314 —
+       Introduces 4-bit NormalFloat (NF4) quantization with double quantization and
+       paged optimizers for fine-tuning 65B-parameter models on a single 48GB GPU.
+       Demonstrates that LoRA adapters applied to 4-bit quantized base models recover
+       full 16-bit fine-tuning performance. The bitsandbytes 4-bit (load_in_4bit)
+       functionality is a direct implementation of this paper.
+  ℹ️  [23] bitsandbytes Foundation, "bitsandbytes: Accessible Large Language Models via
+       k-bit Quantization for PyTorch," GitHub Repository, 2024. [Online]. Available:
+       https://github.com/bitsandbytes-foundation/bitsandbytes — The open-source library
+       implementing LLM.int8() [21] and QLoRA [22] for PyTorch. Provides Linear8bitLt
+       and Linear4bit module replacements, 8-bit Adam and other optimizers, and the
+       paged optimizer used in QLoRA. The installed package detected and smoke-tested in
+       this report.
+
+  ── 7. LLM Serving & Inference Optimization ────────────────────────────────
+
+  ℹ️  [24] W. Kwon et al., "Efficient Memory Management for Large Language Model
+       Serving with PagedAttention," in Proc. ACM SIGOPS 29th Symposium on Operating
+       Systems Principles (SOSP), 2023. [Online]. Available:
+       https://arxiv.org/abs/2309.06180 — Introduces PagedAttention, an OS-inspired KV
+       cache management scheme that eliminates memory fragmentation in LLM serving by
+       using non-contiguous physical memory blocks. Enables vLLM to achieve 2–4×
+       throughput improvement over FasterTransformer and Orca at equal latency. This
+       paper is the foundation of the vLLM serving framework checked in this report's
+       Agentic AI section.
+  ℹ️  [25] NVIDIA Corporation, "NVIDIA TensorRT Documentation," NVIDIA Developer, 2025.
+       [Online]. Available:
+       https://docs.nvidia.com/deeplearning/tensorrt/latest/index.html — Official
+       documentation for NVIDIA TensorRT, the inference optimization SDK. Covers layer
+       fusion, precision calibration (INT8, FP8, FP4), dynamic shape handling, the ONNX
+       parser, and TensorRT-LLM for LLM deployment. TensorRT is audited for both GPU and
+       CPU (TensorRT Execution Provider in ONNX Runtime) in this report.
+  ℹ️  [26] NVIDIA Corporation, "NVIDIA TensorRT-LLM Documentation," NVIDIA Developer,
+       2025. [Online]. Available: https://docs.nvidia.com/tensorrt-llm/index.html —
+       Documentation for TensorRT-LLM, NVIDIA's LLM-specific inference library. Covers
+       in-flight batching, paged KV caching, FP8/INT8/INT4 quantization, and
+       tensor/pipeline parallelism for multi-GPU LLM serving. Represents the production-
+       grade path for deploying llama-cpp-python and other local LLM backends on NVIDIA
+       hardware.
+  ℹ️  [27] NVIDIA Corporation, "NVIDIA Triton Inference Server," NVIDIA Developer,
+       2025. [Online]. Available: https://developer.nvidia.com/triton-inference-server —
+       Documentation for Triton, NVIDIA's model serving platform supporting TensorRT,
+       PyTorch, TensorFlow, ONNX, and custom backends. Implements concurrent model
+       execution, dynamic batching, ensemble pipelines, and the KServe protocol. The
+       tritonclient package is checked in the MLOps section of this report.
+
+  ── 8. Distributed Training & Memory Optimization ──────────────────────────
+
+  ℹ️  [28] S. Rajbhandari, J. Rasley, O. Ruwase, and Y. He, "ZeRO: Memory Optimizations
+       Toward Training Trillion Parameter Models," in Proc. International Conference for
+       High Performance Computing, Networking, Storage and Analysis (SC'20), 2020.
+       [Online]. Available: https://arxiv.org/abs/1910.02054 — Introduces the Zero
+       Redundancy Optimizer (ZeRO), which eliminates memory redundancy in data-parallel
+       training by partitioning optimizer states, gradients, and parameters across GPUs
+       (ZeRO stages 1, 2, 3). Enables training of models with 1T+ parameters on existing
+       GPU clusters. The foundational paper for the DeepSpeed library's core memory
+       optimization, and a prerequisite for understanding why deepspeed is in the CUDA
+       packages section.
+  ℹ️  [29] J. Rasley, S. Rajbhandari, O. Ruwase, and Y. He, "DeepSpeed: System
+       Optimizations Enable Training Deep Learning Models with Over 100 Billion
+       Parameters," in Proc. 26th ACM SIGKDD International Conference on Knowledge
+       Discovery & Data Mining (KDD), 2020. [Online]. Available:
+       https://dl.acm.org/doi/10.1145/3394486.3406703 — Presents the DeepSpeed library
+       as a unified system integrating ZeRO [28], pipeline parallelism, optimized
+       transformer kernels, and mixed precision. Demonstrates the Turing-NLG 17B
+       parameter model. The paper documenting the DeepSpeed package audited in this
+       report.
+  ℹ️  [30] M. Shoeybi, M. Patwary, R. Puri, P. LeGresley, J. Casper, and B. Catanzaro,
+       "Megatron-LM: Training Multi-Billion Parameter Language Models Using Model
+       Parallelism," arXiv preprint arXiv:1909.08053, 2019. [Online]. Available:
+       https://arxiv.org/abs/1909.08053 — Introduces tensor parallelism for transformer
+       models, enabling training of 8.3B parameter GPT models by splitting attention
+       heads and MLP layers across GPUs. Combined with ZeRO [28] and pipeline
+       parallelism to form the 3D parallelism strategy used in modern LLM training.
+       Explains why CUDA memory limits constrain the models that can be trained on a
+       single GPU.
+
+  ── 9. Deep Learning Frameworks ─────────────────────────────────────────────
+
+  ℹ️  [31] A. Paszke et al., "PyTorch: An Imperative Style, High-Performance Deep
+       Learning Library," in Advances in Neural Information Processing Systems
+       (NeurIPS), 2019. [Online]. Available: https://arxiv.org/abs/1912.01703 — The
+       primary academic citation for PyTorch. Describes the define-by-run execution
+       model, autograd engine, memory allocator, and the CUDA backend. PyTorch is the
+       central framework whose CUDA availability, smoke test performance, and
+       AMP/BF16/TF32 support are the core focus of this report. Cite this paper when
+       crediting PyTorch in academic work.
+  ℹ️  [32] M. Abadi et al., "TensorFlow: A System for Large-Scale Machine Learning," in
+       Proc. 12th USENIX Symposium on Operating Systems Design and Implementation
+       (OSDI), 2016. [Online]. Available: https://arxiv.org/abs/1605.08695 — The
+       foundational paper introducing TensorFlow's dataflow graph model and distributed
+       execution engine. The TensorFlow GPU backend (tensorflow[and-cuda]) is audited in
+       this report, and understanding its build system (CUDA toolkit version embedding)
+       explains why TF GPU failures are commonly caused by toolkit/wheel version
+       mismatches.
+  ℹ️  [33] R. Frostig, M. J. Johnson, and C. Leary, "Compiling Machine Learning
+       Programs via High-Level Tracing," in Proc. SysML Conference, 2018. [Online].
+       Available: https://mlsys.org/Conferences/doc/2018/146.pdf — The original academic
+       paper introducing JAX's design: composable function transformations (jit, grad,
+       vmap, pmap) over NumPy-compatible code using XLA as the compiler backend. The
+       jax[cuda] package audited in this report uses these primitives with CUDA kernels
+       generated by XLA. Explains why JAX's programming model differs fundamentally from
+       PyTorch despite both targeting GPU acceleration.
+  ℹ️  [34] NVIDIA Corporation, "cuDNN: A GPU-Accelerated Library for Deep Neural
+       Networks," NVIDIA Developer, 2024. [Online]. Available:
+       https://developer.nvidia.com/cudnn — Official product page for cuDNN, NVIDIA's
+       deep learning primitive library providing GPU-accelerated implementations of
+       convolution, pooling, normalization, and activation functions. cuDNN is a
+       mandatory dependency for PyTorch GPU, TensorFlow GPU, and JAX GPU; its version is
+       verified in the sanity checks section of this report.
+
+  ── 10. Transformers & Foundation Model Architecture ───────────────────────
+
+  ℹ️  [35] A. Vaswani et al., "Attention Is All You Need," in Advances in Neural
+       Information Processing Systems (NeurIPS), 2017. [Online]. Available:
+       https://arxiv.org/abs/1706.03762 — The landmark paper introducing the Transformer
+       architecture based solely on self-attention, replacing RNNs for sequence modeling
+       tasks. Every major LLM (GPT, BERT, LLaMA, Claude, Gemini) is a descendant of this
+       architecture. Directly relevant to this report's FlashAttention, Tensor Core, and
+       Transformer Engine coverage: all of these are hardware/software optimizations for
+       the matrix operations defined in this paper.
+  ℹ️  [36] T. Brown et al., "Language Models are Few-Shot Learners," in Advances in
+       Neural Information Processing Systems (NeurIPS), 2020. [Online]. Available:
+       https://arxiv.org/abs/2005.14165 — Introduces GPT-3 (175B parameters) and
+       demonstrates emergent few-shot capabilities without task-specific fine-tuning.
+       The scale of GPT-3 motivated the memory optimization techniques (ZeRO,
+       quantization, sparsity) and serving infrastructure (vLLM, TensorRT-LLM) that form
+       the core of the CUDA packages audited in this report.
+  ℹ️  [37] J. Devlin, M. Chang, K. Lee, and K. Toutanova, "BERT: Pre-training of Deep
+       Bidirectional Transformers for Language Understanding," in Proc. NAACL, 2019.
+       [Online]. Available: https://arxiv.org/abs/1810.04805 — Introduces bidirectional
+       transformer pre-training via masked language modeling, establishing the pre-
+       train/fine-tune paradigm. BERT is the canonical benchmark for both TensorRT and
+       DeepSpeed performance evaluation and the reference model for many CUDA package
+       smoke tests including FlashAttention-2 benchmarks.
+  ℹ️  [38] H. Touvron et al., "LLaMA: Open and Efficient Foundation Language Models,"
+       arXiv preprint arXiv:2302.13971, 2023. [Online]. Available:
+       https://arxiv.org/abs/2302.13971 — Introduces the LLaMA family of open-weight
+       models (7B–65B), which became the de facto reference models for llama-cpp-python,
+       vLLM, and local LLM inference. The GPU memory requirements of LLaMA models are
+       the practical motivation for quantization (bitsandbytes), efficient serving
+       (vLLM), and the GPU VRAM audit in this report's sanity checks.
+
+  ── 11. GPU-Accelerated Libraries: RAPIDS, CuPy, FAISS ─────────────────────
+
+  ℹ️  [39] RAPIDS Team, "RAPIDS: GPU-Accelerated Data Science," NVIDIA / RAPIDS.ai,
+       2024. [Online]. Available: https://rapids.ai — The RAPIDS ecosystem provides GPU-
+       accelerated pandas-compatible DataFrames (cuDF), scikit-learn-compatible ML
+       algorithms (cuML), and graph analytics (cuGraph). RAPIDS requires Volta+ (CC
+       7.0+) and is commonly installed separately from PyTorch. cuDF, cuML, and cuGraph
+       are individually detected in this report's CUDA packages section with import-vs-
+       installed distinction.
+  ℹ️  [40] RAPIDS Team, "cuDF: GPU DataFrames," NVIDIA / RAPIDS GitHub, 2024. [Online].
+       Available: https://github.com/rapidsai/cudf — cuDF provides a pandas-compatible
+       GPU DataFrame API accelerating data wrangling operations by 10–100× on NVIDIA
+       GPUs. Uses libcudf (C++ CUDA backend) and integrates with Dask for multi-GPU and
+       multi-node operations. This package requires the RAPIDS GPU requirements (Volta+
+       CC 7.0+, compatible CUDA toolkit) and is one of the most commonly affected
+       packages by environment version mismatches.
+  ℹ️  [41] R. Okuta, Y. Unno, D. Nishino, S. Hido, and C. Loomis, "CuPy: A NumPy-
+       Compatible Library for NVIDIA GPU Calculations," in Proc. Workshop on Machine
+       Learning Systems (LearningSys), NIPS 2017. [Online]. Available:
+       https://learningsys.org/nips17/assets/papers/paper_16.pdf — Introduces CuPy as a
+       NumPy/SciPy-compatible array library that replaces CPU operations with CUDA
+       kernels. Supports custom CUDA kernels inline in Python. CuPy is audited in the
+       CUDA packages section and its GPU backend is verified via
+       cupy.cuda.is_available().
+  ℹ️  [42] J. Johnson, M. Douze, and H. Jégou, "Billion-Scale Similarity Search with
+       GPUs," IEEE Transactions on Big Data, vol. 7, no. 3, pp. 535–547, 2021. [Online].
+       Available: https://arxiv.org/abs/1702.08734 — The primary academic paper for
+       FAISS (Facebook AI Similarity Search), covering GPU-accelerated approximate
+       nearest-neighbor search for billion-scale vector datasets. faiss-gpu provides
+       CUDA-based indexing and search and is audited in the CUDA section; faiss-cpu
+       provides the same algorithms without GPU dependency and is audited in the CPU
+       section.
+
+  ── 12. Agentic AI Frameworks ──────────────────────────────────────────────
+
+  ℹ️  [43] H. Chase, "LangChain: Building Applications with LLMs through
+       Composability," GitHub Repository, 2022. [Online]. Available:
+       https://github.com/langchain-ai/langchain — The LangChain framework pioneered
+       composable LLM application development through chains, agents, memory, and
+       retrieval components. Although its architecture has been partially superseded by
+       LangGraph for stateful agentic workflows, LangChain remains the most widely
+       installed LLM orchestration library and is audited in the Agentic AI section.
+  ℹ️  [44] AWS Strands Team, "Strands Agents SDK," Amazon Web Services, 2025. [Online].
+       Available: https://github.com/strands-agents/sdk-python — The Strands Agents SDK
+       implements a tool-driven agentic loop where the LLM determines tool calling
+       order. Designed for scalability with large tool libraries (100+ tools) and native
+       Amazon Bedrock integration. Audited in the Agentic AI section; the default LLM
+       backend uses Bedrock's Claude models, with OpenAI and Ollama support for GPU-
+       local inference.
+  ℹ️  [45] J. Liu, "LlamaIndex: Data Framework for LLM Applications," GitHub
+       Repository, 2022. [Online]. Available: https://github.com/run-llama/lllamaindex —
+       LlamaIndex provides data ingestion, indexing, and retrieval primitives for
+       building RAG (Retrieval-Augmented Generation) pipelines. Supports vector store
+       integrations including FAISS, ChromaDB, Qdrant, and Weaviate. GPU acceleration
+       benefits LlamaIndex indirectly through faster embedding generation and GPU-based
+       vector search. Audited in the Agentic AI section.
+  ℹ️  [46] Amazon Web Services, "Amazon Bedrock Python SDK," AWS Documentation, 2024.
+       [Online]. Available: https://boto3.amazonaws.com/v1/documentation/api/latest/refe
+       rence/services/bedrock.html — The boto3 SDK provides Python access to Amazon
+       Bedrock's managed LLM inference, Bedrock Agents, and Knowledge Bases APIs.
+       boto3's bedrock-runtime, bedrock-agent, and bedrock-agent-runtime service clients
+       are the sole pip-installable interface to Bedrock; no separate bedrock package
+       exists. Audited under LLM Clients in this report.
+
+  ── 13. Vector Databases ────────────────────────────────────────────────────
+
+  ℹ️  [47] A. Babenko, A. Slesarev, A. Chigorin, and V. Lempitsky, "Neural Codes for
+       Image Retrieval," in Proc. European Conference on Computer Vision (ECCV), 2014.
+       [Online]. Available: https://arxiv.org/abs/1404.1777 — Early foundational work
+       showing deep neural network features as compact vector representations for large-
+       scale image retrieval, establishing the embedding-based vector search paradigm
+       that all modern vector databases implement. Context for why GPU acceleration
+       (FAISS-GPU, Qdrant with CUDA, Weaviate) matters: embedding generation and
+       nearest-neighbor search are both GPU-acceleratable.
+  ℹ️  [48] Qdrant Team, "Qdrant: High-Performance Vector Database," Qdrant, 2024.
+       [Online]. Available: https://qdrant.tech/documentation/ — Documentation for
+       Qdrant, a production vector database with HNSW-based approximate nearest-neighbor
+       search, filtering, and payload storage. CUDA is used for accelerated indexing
+       operations. Audited under Agentic AI / vector stores in this report. Recommended
+       for billion-scale vector search where faiss-gpu memory constraints become
+       limiting.
+  ℹ️  [49] Weaviate Team, "Weaviate: Open-Source Vector Database," Weaviate, 2024.
+       [Online]. Available: https://weaviate.io/developers/weaviate — Documentation for
+       Weaviate, an open-source vector database with built-in vectorization modules,
+       multi-tenancy, and hybrid (vector + keyword) search. Relevant to GPU environments
+       because Weaviate's CUDA-enabled modules can perform GPU-accelerated embedding and
+       vector indexing. Audited in the Agentic AI section.
+
+  ── 14. MLOps & Experiment Tracking ────────────────────────────────────────
+
+  ℹ️  [50] A. Chen et al., "Developments in MLflow: A System to Accelerate the Machine
+       Learning Lifecycle," in Proc. Workshop on Data Management for End-to-End Machine
+       Learning (DEEM), 2020. [Online]. Available:
+       https://dl.acm.org/doi/10.1145/3399579.3399867 — Describes MLflow's tracking,
+       project, model registry, and deployment abstractions. MLflow is GPU-aware through
+       PyTorch/TensorFlow autologging of training curves and hyperparameters. Audited in
+       the MLOps section of this report.
+  ℹ️  [51] L. Biewald, "Experiment Tracking with Weights and Biases," Technical Report,
+       2020. [Online]. Available: https://www.wandb.com/papers/intro.pdf — Introduces
+       Weights & Biases (wandb) for experiment tracking, hyperparameter sweep
+       orchestration, model artifact versioning, and GPU metrics dashboards. W&B
+       captures per-GPU memory usage, CUDA utilization, and temperature automatically
+       when integrated with PyTorch. Audited as wandb in the MLOps section.
+  ℹ️  [52] NVIDIA Corporation, "NVIDIA Nsight Systems," NVIDIA Developer, 2024.
+       [Online]. Available: https://developer.nvidia.com/nsight-systems — Nsight Systems
+       is NVIDIA's system-wide profiling tool for analyzing GPU/CPU interaction, CUDA
+       kernel timelines, NVLink communication, and memory transfer bottlenecks. While
+       not a pip package, Nsight Systems is the standard tool for diagnosing why GPU
+       utilization is low in CUDA ML workloads — understanding it contextualizes the
+       memory-pressure and benchmark results in this report.
+
+  ── 15. Python Package & Environment Management ─────────────────────────────
+
+  ℹ️  [53] Python Packaging Authority, "pip: The Python Package Installer," Python
+       Software Foundation, 2024. [Online]. Available: https://pip.pypa.io/en/stable/ —
+       Official documentation for pip, the standard Python package installer. pip's
+       importlib.metadata integration (PEP 566) is the mechanism this script uses for
+       package detection: every ✅ or ❌ in the package audit reflects pip-visible
+       packages in the currently active Python environment. Understanding pip's scope is
+       prerequisite to interpreting this report's Audit Scope footnote correctly.
+  ℹ️  [54] PyPA, "virtualenv / venv: Python Virtual Environments," Python Software
+       Foundation, 2024. [Online]. Available:
+       https://docs.python.org/3/library/venv.html — Documentation for Python's built-in
+       venv module and the broader virtual environment ecosystem. Virtual environments
+       are the primary deployment unit this report audits: the script detects the
+       current venv, and all pip-visible packages reflect the contents of the active
+       venv. Explains the scope limitation described in the Audit Scope footnote.
+  ℹ️  [55] B. Ragan-Kelley, F. Pérez, B. Granger, and the Jupyter Team, "The
+       Jupyter/IPython Architecture: A Unified View of Computational Environments," in
+       Proc. SciPy, 2014. [Online]. Available:
+       https://conference.scipy.org/proceedings/scipy2014/pdfs/granger.pdf —
+       Foundational paper on the Jupyter architecture (kernels, protocols, notebooks).
+       JupyterLab, Jupyter AI, and related extensions are audited in the Notebooks
+       section of this report. CUDA GPU kernels run inside Jupyter notebooks when the
+       Python kernel's venv has GPU-enabled packages installed.
+  ℹ️  [56] conda-forge Community, "conda-forge: A Community-Led Collection of Recipes
+       for the conda Package Manager," conda-forge, 2024. [Online]. Available:
+       https://conda-forge.org/docs/ — conda-forge provides community-maintained conda
+       packages and is the primary alternative to pip for scientific Python package
+       distribution. Relevant to this report's Audit Scope: packages installed via conda
+       into an active conda environment are visible to this script; packages in other
+       conda environments are not. RAPIDS and some CUDA packages have official conda-
+       forge channels.
+
+  ── 16. NVIDIA Software Stack & Tooling ────────────────────────────────────
+
+  ℹ️  [57] NVIDIA Corporation, "NVIDIA Management Library (NVML)," NVIDIA Developer,
+       2024. [Online]. Available: https://developer.nvidia.com/management-library-nvml —
+       NVML is the C API underlying nvidia-smi. It provides programmatic access to GPU
+       inventory, SM count, clock speeds, temperature, power draw, and per-process
+       memory usage. This report's sanity checks use nvidia-smi (an NVML frontend) and
+       torch.cuda.get_device_properties() (a CUDA runtime alternative) for SM count
+       detection. NVML is also the backend for the pynvml Python bindings.
+  ℹ️  [58] NVIDIA Corporation, "NVIDIA System Management Interface (nvidia-smi),"
+       NVIDIA Developer Documentation, 2024. [Online]. Available:
+       https://developer.nvidia.com/nvidia-smi — nvidia-smi is the primary command-line
+       tool for NVIDIA GPU management and monitoring. This report uses nvidia-smi for
+       driver version detection, GPU inventory (including SM count via --query-
+       gpu=multiprocessor.count), and power/temperature monitoring. The SM count
+       detection falls back to torch.cuda when nvidia-smi's multiprocessor.count field
+       is unsupported by older drivers.
+  ℹ️  [59] NVIDIA Corporation, "NGC: NVIDIA GPU Cloud Container Registry," NVIDIA,
+       2024. [Online]. Available: https://catalog.ngc.nvidia.com — NGC provides pre-
+       built, CUDA-optimized Docker containers for PyTorch, TensorFlow, JAX, TensorRT,
+       and RAPIDS with exact version pinning for driver compatibility. When CUDA version
+       mismatch causes GPU failures in bare-metal environments, NGC containers are the
+       recommended solution — every container guarantees a working CUDA/cuDNN/framework
+       stack.
+  ℹ️  [60] NVIDIA Corporation, "NVIDIA Data Center GPU Driver Documentation," NVIDIA
+       Developer, 2024. [Online]. Available:
+       https://docs.nvidia.com/datacenter/tesla/driver-installation-guide/ — Official
+       guide for installing and managing NVIDIA drivers on Linux data center systems.
+       Understanding the relationship between driver version, maximum CUDA version
+       (reported by nvidia-smi), and the CUDA toolkit version (reported by nvcc) is
+       essential for diagnosing the GPU failures described in the General Notes. The
+       driver must support the CUDA version the wheel was built against.
+
+  ── 17. ONNX & Cross-Framework Interoperability ────────────────────────────
+
+  ℹ️  [61] ONNX Community, "ONNX: Open Neural Network Exchange," ONNX, 2024. [Online].
+       Available: https://onnx.ai — ONNX is the open standard for representing ML models
+       as portable computation graphs. ONNX Runtime (onnxruntime-gpu) provides high-
+       performance inference with CUDA and TensorRT Execution Providers, enabling
+       deployment of PyTorch and TensorFlow models without framework overhead. The
+       onnxruntime-gpu package is audited in the CUDA packages section and smoke-tested
+       for CUDA and TRT EP availability.
+  ℹ️  [62] NVIDIA Corporation, "ONNX Runtime with TensorRT Execution Provider," NVIDIA
+       Technical Blog, 2021. [Online]. Available:
+       https://developer.nvidia.com/blog/accelerating-inference-up-to-6x-faster-in-
+       pytorch-with-torch-tensorrt/ — Explains the TensorRT Execution Provider in ONNX
+       Runtime: how TRT EP partitions an ONNX graph into TRT-optimizable subgraphs and
+       CPU fallback subgraphs, enabling zero-code-change TensorRT acceleration for
+       models exported from any ONNX-compatible framework. Context for the TRT EP smoke
+       test in this report's CUDA section.
+
+  ── 18. Compute Capability & GPU Architecture Reference ────────────────────
+
+  ℹ️  [63] NVIDIA Corporation, "CUDA GPUs — Compute Capability," NVIDIA Developer,
+       2024. [Online]. Available: https://developer.nvidia.com/cuda-gpus — The
+       authoritative table mapping every NVIDIA GPU to its Compute Capability (CC)
+       version. This is the lookup table behind this report's GPU generation detection:
+       Kepler (CC 3.x), Maxwell (CC 5.x), Pascal (CC 6.x), Volta (CC 7.0), Turing (CC
+       7.5), Ampere (CC 8.x), Ada Lovelace (CC 8.9), Hopper (CC 9.0), Blackwell (CC
+       10.x). Required for understanding all CC-gated feature checks in this report.
+  ℹ️  [64] Z. Jia, M. Maggioni, B. Staiger, and D. P. Scarpazza, "Dissecting the NVIDIA
+       Volta GPU Architecture via Microbenchmarking," arXiv preprint arXiv:1804.06826,
+       2018. [Online]. Available: https://arxiv.org/abs/1804.06826 — Academic
+       microbenchmarking study of the V100 GPU's memory hierarchy, instruction
+       throughput, L1/L2 cache sizes, and register bank organization. Provides
+       empirically measured latencies and bandwidths that underlie the roofline-model
+       performance analysis of CUDA kernels. Referenced by the FlashAttention authors
+       for HBM access latency characterization.
+  ℹ️  [65] NVIDIA Corporation, "NVIDIA Ada Lovelace Architecture," NVIDIA Whitepaper,
+       Sept. 2022. [Online]. Available: https://images.nvidia.com/aem-
+       dam/Solutions/geforce/ada/nvidia-ada-gpu-architecture.pdf — Defines the Ada
+       Lovelace architecture (CC 8.9, RTX 4090/RTX 4000 Ada), third-generation RT Cores,
+       and fourth-generation Tensor Cores adding FP8 support. Important because Ada FP8
+       Tensor Cores and their interaction with FlashAttention-3's FP8 path are relevant
+       to this report's FA detection logic on Ada hardware.
+
+  ℹ️  Note: All URLs were verified in March 2026. NVIDIA documentation URLs are subject
+       to reorganization with new toolkit releases; if a URL returns 404, navigate from
+       https://docs.nvidia.com or https://developer.nvidia.com to find the current
+       location of the resource. arXiv URLs are permanent and will not change.
+
+════════════════════════════════════════════════════════════════════
+═══════════════════════  ✅  Report complete  ═══════════════════════
+════════════════════════════════════════════════════════════════════
+  Started            2026-03-04  18:09:06
+  Finished           2026-03-04  18:10:14
+  Saved to           /home/dev1/ml-reports/ml_cuda_detective_20260304_180906.txt
+════════════════════════════════════════════════════════════════════
+
+Developed with assistance from Claude.ai (Anthropic) and
+ChatGPT (OpenAI). AI tools were used for code generation,
+structure, and refinement throughout development.
+
+Suggestions, improvements, and contributions are warmly
+welcome — open an issue or submit a pull request.
