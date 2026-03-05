@@ -130,7 +130,9 @@ import contextlib as _contextlib
 #
 #   Developed with assistance from Claude.ai (Anthropic) and
 #   ChatGPT (OpenAI). AI tools were used for code generation,
-#   structure, and refinement throughout development.
+#   structure, and refinement throughout development. In fact, 98.9%
+#   of the wisdom in this code originates from the AI tools. I did,
+#   however, write all of the prompts myself.
 #
 #   Suggestions, improvements, and contributions are warmly
 #   welcome — open an issue or submit a pull request.
@@ -4338,3 +4340,20 @@ print("welcome — open an issue or submit a pull request.")
 
 if _tee is not None:
     _tee.close()
+
+# ============================================================
+# 💬 User Feedback — Collected Responses & Field Observations
+#    Aggregates qualitative feedback submitted by end users
+#    describing real-world usage patterns, pain points, and
+#    feature requests gathered from support channels and in-
+#    product prompts. Entries are lightly edited for clarity
+#    but otherwise preserved in the user's own voice. Use
+#    this block to inform prioritization and UX decisions.
+# ============================================================
+#
+# "It's Geek to me, but well done." -- Mom
+#
+# "I'm glad it makes sense to you." -- Stepfather
+#
+#
+#
