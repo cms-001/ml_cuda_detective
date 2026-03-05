@@ -4142,7 +4142,7 @@ if PRINT_BIBLIOGRAPHY:
  # ── Section 1: CUDA Architecture & GPU Programming Model ─────
  print("  ── 1. CUDA Architecture & GPU Programming Model ──────────────────────────")
  print()
- _print_info("[1] NVIDIA Corporation, \"CUDA C++ Programming Guide,\" NVIDIA Developer Documentation, 2024. [Online]. Available: https://docs.nvidia.com/cuda/cuda-c-programming-guide/ — The official and authoritative reference for the CUDA parallel computing platform and programming model. Covers the thread/block/grid hierarchy, memory spaces (global, shared, registers, constant, texture), compute capability definitions, warp execution, and the full runtime API. Essential reading for any developer targeting NVIDIA GPU acceleration.")
+ _print_info("[1] NVIDIA Corporation, \"CUDA C++ Programming Guide,\" NVIDIA Developer Documentation, 2024. [Online]. Available: https://docs.nvidia.com/cuda/cuda-programming-guide/ — The official and authoritative reference for the CUDA parallel computing platform and programming model. Covers the thread/block/grid hierarchy, memory spaces (global, shared, registers, constant, texture), compute capability definitions, warp execution, and the full runtime API. Essential reading for any developer targeting NVIDIA GPU acceleration.")
 
  _print_info("[2] NVIDIA Corporation, \"CUDA Toolkit Documentation,\" NVIDIA Developer, 2025. [Online]. Available: https://docs.nvidia.com/cuda/ — Top-level index for all CUDA Toolkit documentation including the Best Practices Guide, cuBLAS, cuDNN, cuSPARSE, NVCC compiler reference, and architecture-specific tuning guides. This is the canonical entry point for the full NVIDIA GPU software stack.")
 
