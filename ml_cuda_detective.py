@@ -22,7 +22,7 @@ import textwrap
 import contextlib as _contextlib
 
 # ================================================================
-# 🕵️‍♂️ ML CUDA Detective — Linux/Windows + NVIDIA GPU Accelerators
+# 🕵️‍♂️ ML CUDA Detective for NVIDIA GPUs
 # ================================================================
 #
 # DESCRIPTION
