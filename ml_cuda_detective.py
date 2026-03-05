@@ -128,14 +128,29 @@ import contextlib as _contextlib
 #   publish, distribute, sublicense, and/or sell copies of it,
 #   subject to the standard MIT License terms.
 #
-#   Developed with assistance from Claude.ai (Anthropic) and
-#   ChatGPT (OpenAI). AI tools were used for code generation,
-#   structure, and refinement throughout development. In fact, 98.9%
-#   of the wisdom in this code originates from the AI tools. I did,
-#   however, write all of the prompts myself.
+#   This script was developed in response to practical challenges
+#   encountered while configuring ML frameworks on legacy GPU hard-
+#   ware during an intracranial aneurysm detection project (RSNA
+#   Kaggle Competition, 2023). It represents the distillation of
+#   six or seven iterative drafts, incorporating the most robust
+#   and reliable components from each prior version.
+#
+#   An annotated bibliography was appended on March 5, 2026, and
+#   will be expanded incrementally as additional canonical litera-
+#   ture is identified — with particular emphasis on GPU architec-
+#   ture, drawing from both NVIDIA engineering publications and the
+#   growing body of academic research on NVIDIA hardware.
+#
+#   Developed with assistance from Claude.ai (Anthropic) and Chat-
+#   GPT (OpenAI). AI tools were employed throughout for code gen-
+#   eration, structural organization, and iterative refinement.
+#   The majority of technical insight embedded in this script was
+#   surfaced through those tools. All prompts were authored by the
+#   original developer.
 #
 #   Suggestions, improvements, and contributions are warmly
-#   welcome — open an issue or submit a pull request.
+#   welcome — open an issue or submit a pull request. The best
+#   feedback will be included at the bottom of this script.
 # ================================================================
 
 # ================================================================
