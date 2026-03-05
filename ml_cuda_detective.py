@@ -174,11 +174,20 @@ import contextlib as _contextlib
 # center GPU families (Hopper H100 CC 9.0, Ampere A100 CC 8.0,
 # Ada L40S CC 8.9), which fully support every modern ML feature:
 # Tensor Cores, BF16, TF32, 2:4 structured sparsity, FP8, and
-# FlashAttention-2/3. The underlying CUDA stack on these instances
-# typically tracks the current CUDA Toolkit release (12.x as of
-# 2025-2026), and both NVIDIA and the cloud providers invest
-# heavily in ensuring that PyTorch, TensorFlow, JAX, and the
-# broader ecosystem are installed and functional on day one.
+# FlashAttention-2/3. 
+#
+# Cloud providers typically provision instances with NVIDIA’s 
+# modern data-center GPU architectures such as Hopper (H100, 
+# CC 9.0), Ampere (A100, CC 8.0), and Ada Lovelace (L40S, CC 8.9).
+# These GPUs include Tensor Cores and support modern deep-learning 
+# formats such as FP16, BF16, and TF32, along with features like 2:4 
+# structured sparsity. Hopper and newer architectures also introduce 
+# FP8 acceleration via NVIDIA’s Transformer Engine. The underlying 
+# CUDA stack on these instances typically tracks the current CUDA 
+# Toolkit release (12.x as of 2025-2026), and both NVIDIA and the
+# cloud providers invest heavily in ensuring that PyTorch, TensorFlow, 
+# JAX, and the broader ecosystem  are installed and functional on 
+# day one.
 #
 # The gold standard for this is NVIDIA's NGC container catalog
 # (catalog.ngc.nvidia.com), which publishes monthly Docker images
