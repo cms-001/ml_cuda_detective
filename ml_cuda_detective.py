@@ -27,11 +27,11 @@ import contextlib as _contextlib
 #
 # DESCRIPTION
 # -----------
-# Comprehensive environment health-check and package inventory tool
-# for NVIDIA GPUs running ML workloads. Covers the full
-# CUDA acceleration stack from core CUDA/cuDNN frameworks down to
-# CPU-only data science utilities, Jupyter notebook infrastructure,
-# MLOps tooling, and Agentic AI frameworks.
+# Designed for NVIDIA GPUs running machine learning workloads, this 
+# tool encompasses the entire CUDA acceleration stack. It includes 
+# core frameworks like CUDA and cuDNN, as well as CPU-only data science 
+# utilities, Jupyter notebook infrastructure, MLOps tools, and Agentic 
+# AI frameworks.
 #
 # WHAT IT CHECKS
 # --------------
