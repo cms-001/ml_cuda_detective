@@ -28,8 +28,7 @@ import contextlib as _contextlib
 # DESCRIPTION
 # -----------
 # Comprehensive environment health-check and package inventory tool
-# for NVIDIA GPU machines (Kepler through Blackwell) running
-# Python-based ML/AI workloads on Linux or Windows. Covers the full
+# for NVIDIA GPUs running AI/ML workloads. Covers the full
 # CUDA acceleration stack from core CUDA/cuDNN frameworks down to
 # CPU-only data science utilities, Jupyter notebook infrastructure,
 # MLOps tooling, and Agentic AI frameworks.
