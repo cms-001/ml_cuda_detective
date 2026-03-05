@@ -234,9 +234,9 @@ All configuration is done by editing the six variables at the top of the script 
 ⚡  CUDA / GPU Accelerated
 ================================================================
   ✅ torch                   2.2.1+cu121    GPU: NVIDIA H100 SXM5 80GB
-     🔥 matmul 512×512       0.42 ms  (float32)
+      matmul 512×512       0.42 ms  (float32)
   ✅ tensorflow              2.15.0         GPU: /device:GPU:0
-     🔥 conv2d smoke test    1.83 ms
+      conv2d smoke test    1.83 ms
   ✅ jax                     0.4.23         GPU: TFRT_GPU_0
   ✅ cupy-cuda12x            12.3.0
   ✅ cudf                    23.12.0
