@@ -263,9 +263,9 @@ import contextlib as _contextlib
 #
 # PRACTICAL IMPLICATIONS
 # ----------------------
-# If this report is running on a Pascal (GTX 1080, P100) or
-# Maxwell GPU, expect ❌ for RAPIDS, flash-attn, xformers, and
-# any package that ships pre-compiled CUDA kernels targeting
+# If this report is running on a Pascal generation GPU (ex: GTX 
+# 1060) expect ❌ for RAPIDS, flash-attn, xformers, and any
+# package that ships pre-compiled CUDA kernels targeting
 # CC 7.0+. These are not installation failures — the packages
 # physically cannot execute their GPU kernels on the hardware.
 # PyTorch itself will still install and run (the base wheels
