@@ -108,7 +108,7 @@ import contextlib as _contextlib
 #
 # REQUIREMENTS
 # ------------
-#   Python 3.10+, Linux or Windows, NVIDIA GPU (Kepler+) recommended.
+#   Python 3.10+, NVIDIA GPU (Kepler+) recommended.
 #   No extra dependencies beyond the standard library —
 #   all checked packages are optional (missing = ❌, not a crash).
 #
