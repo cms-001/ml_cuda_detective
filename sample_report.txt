@@ -1068,8 +1068,8 @@ Dependency health
        MIG virtualization feature described in the sanity checks.
   ℹ️  [7] NVIDIA Corporation, "NVIDIA Ampere GA102 GPU Architecture," NVIDIA
        Whitepaper, Sept. 2020. [Online]. Available:
-       https://www.nvidia.com/content/PDF/nvidia-ampere-ga-102-gpu-architecture-
-       whitepaper-v2.pdf — Covers the consumer-side Ampere architecture (RTX 3090, RTX
+       https://www.nvidia.com/content/PDF/nvidia-ampere-ga-102-gpu-architecture-whitepaper
+       -v2.pdf — Covers the consumer-side Ampere architecture (RTX 3090, RTX
        3080), the GA102 die with Compute Capability 8.6. Explains the higher CUDA core
        count per SM vs. the GA100 (128 vs. 64 FP32 cores/SM), the 2x FP32 datapath, and
        the inclusion of Sparse Tensor Cores. Essential for understanding why A100 CC 8.0
