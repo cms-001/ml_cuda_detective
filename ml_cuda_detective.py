@@ -120,7 +120,7 @@ import contextlib as _contextlib
 #   Copyright (c) 2026 Christopher Swenson. All rights reserved.
 #
 #   Version  : 1.0
-#   Date Last Updated: 2026-03-04
+#   Date Last Updated: 2026-03-05
 #   License  : MIT (permissive)
 #
 #   Permission is hereby granted, free of charge, to any person
